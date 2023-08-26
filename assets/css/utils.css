@@ -1,0 +1,11 @@
+
+
+.router-link-active.router-link-exact-active{
+  background-color: theme('colors.flow-brown');
+  border-radius: 30px;
+  margin-left: -0.5rem;
+}
+
+.router-link-active.router-link-exact-active *{
+  color: white;
+}
