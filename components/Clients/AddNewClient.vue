@@ -1,0 +1,104 @@
+<template>
+  <div>
+    <Button size="small" severity="success" rounded class="mx-3" @click="addClientDialog = true">
+      <Icon name="mdi:add-bold" color="white" />
+    </Button>
+    <Dialog :visible="addClientDialog" modal header="Aggiungi Socio" :style="{ width: '50vw' }">
+      <div class="grid grid-rows-10 grid-cols-4 gap-10 p-10">
+        <span class="p-float-label col-span-full">
+          <InputText v-model="newClient.avatar" placeholder="Link Foto" class="w-full"></InputText>
+          <label for="birth_date">Link Foto</label>
+        </span>
+        <span class="p-float-label col-span-2">
+          <InputText v-model="newClient.name" placeholder="Nome" class="w-full"></InputText>
+          <label>Nome</label>
+        </span>
+        <span class="p-float-label col-span-2">
+          <InputText v-model="newClient.surname" placeholder="Cognome" class="w-full"></InputText>
+          <label>Cognome</label>
+        </span>
+
+        <ToggleButton v-model="newClient.gender" onLabel="Maschio" offLabel="Femmina" id="toggleGender">
+          <template #icon="slotProps">
+            <Icon v-if="slotProps.value == true" name="icon-park-solid:boy-one" color="blue"></Icon>
+            <Icon v-else name="icon-park-solid:girl-one" color="red"></Icon>
+          </template>
+        </ToggleButton>
+          
+        <span class="p-float-label col-span-3">
+          <InputText v-model="newClient.address" placeholder="Indirizzo" class="w-full"></InputText>
+          <label>Indirizzo</label>
+        </span>
+        <span class="p-float-label col-span-2">
+          <InputText v-model="newClient.email" placeholder="Email" class="w-full"></InputText>
+          <label>Email</label>
+        </span>
+        <span class="p-float-label col-span-2">
+          <InputText v-model="newClient.telephone" placeholder="Telefono" class="w-full"></InputText>
+          <label>Telefono</label>
+        </span>
+        <span class="p-float-label col-span-2">
+          <Calendar v-model="newClient.dateOfBirth" placeholder="Data di nascita" dateFormat="dd/mm/yy" class="w-full"/>
+          <label>Data di nascita</label>
+        </span>
+        <span class="p-float-label col-span-2">
+          <Calendar v-model="newClient.firstContact" placeholder="Primo Contatto" dateFormat="dd/mm/yy" class="w-full"/>
+          <label>Primo Contatto</label>
+        </span>
+        <span class="p-float-label col-span-4">
+          <InputText v-model="newClient.notes" placeholder="Note" class="w-full"></InputText>
+          <label>Note</label>
+        </span>
+      </div>
+      <template #footer>
+        <Button label="Chiudi" @click="addClientDialog = false" outlined />
+        <Button label="Salva" severity="success" @click="saveNewClient()" outlined />
+      </template>
+    </Dialog>
+  </div>
+  
+</template>
+
+<script setup>
+import { useFiltersStore } from "@/store/pill";
+import Client from '@/assets/entities/client.js';
+const emit = defineEmits(['saved'])
+const { addClient } = setClientsApi() // auto-imported
+const filtersStore = useFiltersStore()
+const { newSuccessMessage, newErrorMessage } = filtersStore
+
+const newClient = reactive(new Client());
+const addClientDialog = ref(false)
+
+async function saveNewClient(){
+  let newClientname = `${newClient.name} ${newClient.surname}`
+  try {
+    await addClient(newClient);
+    newSuccessMessage(`${newClientname} è stato aggiunto al database`);
+    newClient.reset();
+    addClientDialog.value = false
+    emit('saved')
+    
+    
+  } catch (error) {
+    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${newClientname} : ${error}`)
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+
+#toggleGender.p-togglebutton.p-button{
+  background: rgba(255, 192, 203, 0.5);
+  color: red;
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.1);
+  border-color: pink;
+}
+
+#toggleGender.p-togglebutton.p-button.p-highlight {
+  background: rgba(0, 0, 255, 0.3);
+  color: blue;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 255, 0.1);
+  border-color: blue;
+}
+</style>

@@ -21,7 +21,7 @@ async function handleRegistration() {
 async function userLogin(){
   await loginUser(creds.email, creds.password)
   .then(() => {
-    router.push({ path: "/home" });
+    router.push({ path: "/dashboard" });
   });
 }
 

@@ -5,9 +5,12 @@ export default function() {
   const getClients =  async () => {
     console.log('YAAAAHOOOOOOO');
     const querySnapshot = await getDocs(collection(getFirestore(), "clients"));
+    
     const clientsData = await Promise.all(querySnapshot.docs.map(async (doc) => {
       const client = doc.data();
 
+      client.id = doc.id
+      
       /* ACTIVITY REFERENCES */
       const activities = await Promise.all(client.activities.map(async (activity) => {
         const activityDocument = await getOneDoc(activity.id, 'activities');

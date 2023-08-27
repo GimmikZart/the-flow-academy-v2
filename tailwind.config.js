@@ -20,7 +20,8 @@ module.exports = {
       'gray-dark': '#273444',
       'gray': '#8492a6',
       'light-gray': '#EFF3F8',
-      'flow-brown': '#B06C2E'
+      'flow-brown': '#B06C2E',
+      'hard-pink': 'rgb(252, 121, 142)'
     },
     borderRadius: {
       'none': '0',
