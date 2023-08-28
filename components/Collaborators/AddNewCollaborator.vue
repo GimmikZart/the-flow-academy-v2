@@ -3,13 +3,17 @@
     <Button size="small" severity="success" rounded class="mx-3" @click="addCollaboratorDialog = true">
       <Icon name="mdi:add-bold" color="white" />
     </Button>
-    <Dialog :visible="addCollaboratorDialog" modal header="Aggiungi Socio" :style="{ width: '50vw' }">
+    <Dialog :visible="addCollaboratorDialog" modal header="Aggiungi Collaboratore" :style="{ width: '50vw' }">
       <div class="grid grid-rows-10 grid-cols-4 gap-10 p-10">
+
+        
         <span class="p-float-label p-input-icon-left col-span-full">
           <Icon name="radix-icons:avatar" size="20px"></Icon>
-          <InputText v-model="newCollaborator.avatar" placeholder="Link Foto" class="w-full"></InputText>
+          <InputText v-model="newCollaborator.avatar" disabled placeholder="Link Foto" class="w-full"></InputText>
           <label for="birth_date">Link Foto</label>
         </span>
+
+
         <span class="p-float-label p-input-icon-left col-span-2">
           <Icon name="clarity:avatar-line" size="20px"></Icon>
           <InputText v-model="newCollaborator.name" placeholder="Nome" class="w-full"></InputText>
@@ -52,6 +56,8 @@
           <label>Primo Contatto</label>
         </span>
 
+        <Textarea v-model="newCollaborator.description" placeholder="Descrizione Collaboratore" class="col-start-1 col-end-5"></Textarea>
+
         <span class="p-float-label p-input-icon-left col-start-1 col-end-1">
           <Icon name="mingcute:hat-2-line" size="20px"></Icon>
           <InputText v-model="newCollaborator.sizes.head" placeholder="Misura cappello" class="w-full"/>
@@ -73,6 +79,31 @@
           <label>Misura scapre</label>
         </span>
 
+        <span class="p-float-label p-input-icon-left col-start-1 col-end-3">
+          <Icon name="ic:baseline-facebook" size="20px"></Icon>
+          <InputText v-model="newCollaborator.linkSocial.fb" placeholder="Facebook" class="w-full"></InputText>
+          <label>Facebook</label>
+        </span>
+        <span class="p-float-label p-input-icon-left col-start-3 col-end-5">
+          <Icon name="mdi:instagram" size="20px"></Icon>
+          <InputText v-model="newCollaborator.linkSocial.ig" placeholder="Instagram" class="w-full"></InputText>
+          <label>Instagram</label>
+        </span>
+        <span class="p-float-label p-input-icon-left col-start-1 col-end-3">
+          <Icon name="mdi:linkedin" size="20px"></Icon>
+          <InputText v-model="newCollaborator.linkSocial.ln" placeholder="Linkedin" class="w-full"></InputText>
+          <label>Linkedin</label>
+        </span>
+        <span class="p-float-label p-input-icon-left col-start-3 col-end-5">
+          <Icon name="ic:baseline-tiktok" size="20px"></Icon>
+          <InputText v-model="newCollaborator.linkSocial.tk" placeholder="TikTok" class="w-full"></InputText>
+          <label>TikTok</label>
+        </span>
+        <span class="p-float-label p-input-icon-left col-start-2 col-end-4">
+          <Icon name="mdi:web" size="20px"></Icon>
+          <InputText v-model="newCollaborator.linkSocial.web" placeholder="Sito web" class="w-full"></InputText>
+          <label>Sito Web</label>
+        </span>
 
         <span class="p-float-label p-input-icon-left col-span-4">
           <Icon name="uil:notes" size="20px"></Icon>

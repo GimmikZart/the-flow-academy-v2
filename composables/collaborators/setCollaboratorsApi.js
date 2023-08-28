@@ -1,4 +1,4 @@
-import { getFirestore, collection, addDoc, doc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 
 
@@ -13,6 +13,8 @@ export default function() {
   }
   
   const addCollaborator =  async (newCollaborator) => {
+    if(newCollaborator.dateOfBirth != null) newCollaborator.dateOfBirth = new Date(newCollaborator.dateOfBirth) 
+    if(newCollaborator.firstContact != null) newCollaborator.firstContact = new Date(newCollaborator.firstContact)
     const collaboratorOnjPlain = newCollaborator.toPlainObject();
     await addDoc(collaboratorsCollection, collaboratorOnjPlain);
     return newCollaborator;

@@ -6,20 +6,20 @@
       
       <span class="p-input-icon-left h-full w-2/6">
         <Icon name="ic:twotone-search" size="20px"/>
-        <InputText v-model="clientFilter['global'].value" placeholder="Filtra soci" class="h-full w-full"/>
+        <InputText v-model="collaboratorFilter['global'].value" placeholder="Filtra collaboratori" class="h-full w-full"/>
       </span>
       
       <div class="flex items-center h-full top-tool-box">
         <!-- <SelectButton v-model="actionMode" :options="actionsList" optionLabel="name" aria-labelledby="multiple">
         </SelectButton> -->
-        <TopBarActionModes @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
-        <ClientsAddNewClient @saved="loadClientsList()"></ClientsAddNewClient>
+        <TopBarActionModes entity="collaborators" @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
+        <CollaboratorsAddNewCollaborator @saved="loadCollaboratorsList()"></CollaboratorsAddNewCollaborator>
       </div>
     </section>
 
     <!-- CONTENT -->
     <section class="w-full flex-grow border-4 border-white rounded-flow overflow-hidden">
-      <DataTable :filters="clientFilter" filterDisplay="row" :globalFilterFields="['name', 'surname']" resizableColumns columnResizeMode="fit" :value="clients" tableStyle="min-width: 50rem" removableSort  stripedRows class="p-datatable-sm" sortMode="multiple">
+      <DataTable :filters="collaboratorFilter" filterDisplay="row" :globalFilterFields="['name', 'surname']" resizableColumns columnResizeMode="fit" :value="collaborators" tableStyle="min-width: 50rem" removableSort  stripedRows class="p-datatable-sm" sortMode="multiple">
         <Column field="avatar" header="Avatar">
           <template #body="slotProps">
             <Avatar v-if="slotProps.data.avatar != ''" :image="slotProps.data.avatar" class="mr-2" size="large" shape="circle" />
@@ -53,14 +53,17 @@
         </Column>
         <Column field="status" header="Status" sortable >
           <template #body="slotProps">
-            <ClientsStatusLabel :clientStatus="slotProps.data.status"></ClientsStatusLabel>
+            <CollaboratorsStatusLabel :collaboratorStatus="slotProps.data.status"></CollaboratorsStatusLabel>
           </template>
         </Column>
         <Column field="action"  header="Azione">
           <template #body="slotProps">
-            <ClientsEditClient v-if="actionMode == 1" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsEditClient>
-            <ClientsRemoveClient v-else-if="actionMode == 2" :removingClient="slotProps.data" @saved="loadClientsList()"></ClientsRemoveClient>
-            <ClientsAddNewPayment v-else-if="actionMode == 3" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsAddNewPayment>
+            <Button v-if="actionMode == 4" text>
+              <Icon name="carbon:user-profile" size="2rem" color="brown"></Icon>
+            </Button>
+            <CollaboratorsEditCollaborator v-else-if="actionMode == 1" :editingCollaborator="slotProps.data" @saved="loadCollaboratorsList()"></CollaboratorsEditCollaborator>
+            <CollaboratorsRemoveCollaborator v-else-if="actionMode == 2" :removingCollaborator="slotProps.data" @saved="loadCollaboratorsList()"></CollaboratorsRemoveCollaborator>
+            <CollaboratorsAddNewPayment v-else-if="actionMode == 3 && slotProps.data.status != 2" :editingCollaborator="slotProps.data" @saved="loadCollaboratorsList()"></CollaboratorsAddNewPayment>
           </template>
         </Column>
       </DataTable>
@@ -71,23 +74,23 @@
 <script setup>
   import { ref, onBeforeMount  } from 'vue';
   import { FilterMatchMode } from 'primevue/api';
-  const { getClients } = getClientsApi() // auto-imported
+  const { getCollaborators } = getCollaboratorsApi() // auto-imported
   const { getInitials, getAge } = utility()
 
-  const clients = ref();
-  const actionMode = ref(3);
-  const clientFilter= ref({
+  const collaborators = ref();
+  const actionMode = ref(4);
+  const collaboratorFilter= ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     surname: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
   })
 
-  const loadClientsList = async () => {
-    clients.value = await getClients();
+  const loadCollaboratorsList = async () => {
+    collaborators.value = await getCollaborators();
   }
 
 /* HOOKS */ 
   onBeforeMount(async () => {
-    loadClientsList()
+    loadCollaboratorsList()
   })    
 </script>

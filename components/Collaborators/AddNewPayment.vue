@@ -1,9 +1,9 @@
 <template>
   <div>
     <Button text rounded color="green" size="1rem" @click="addPaymentDialog = true">
-      <Icon name="ph:hand-coins" size="2rem" color="green"></Icon>
+      <Icon name="ph:hand-coins" size="2rem" color="red"></Icon>
     </Button>
-    <Dialog :visible="addPaymentDialog" modal :header="`${editingClient.name} ${editingClient.surname} sta pagando:`" :style="{ width: '30vw' }">
+    <Dialog :visible="addPaymentDialog" modal :header="`Stai pagando a ${editingCollaborator.name} ${editingCollaborator.surname}:`" :style="{ width: '30vw' }">
       <div class="grid grid-rows-3 grid-cols-2 gap-10 p-10">
         <span class="p-float-label col-start-1 col-end-2">
           <InputNumber v-model="newPayment.amount" mode="currency" currency="EUR" locale="it-IT" placeholder="Un ammontare di" :minFractionDigits="2" dateFormat="dd/mm/yy" class="w-full"/>
@@ -38,29 +38,29 @@
 import { useFiltersStore } from "@/store/pill";
 import Payment from '@/assets/entities/payment.js';
 /* PROPS */
-const props = defineProps(['editingClient'])
+const props = defineProps(['editingCollaborator'])
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-const { addPayment } = setClientsApi() // auto-imported
+const { addPayment } = setCollaboratorsApi() // auto-imported
 /* RESPONSE */
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
 /* DATA */
-const newPayment = reactive(new Payment(0, props.editingClient));
+const newPayment = reactive(new Payment(1, props.editingCollaborator));
 const addPaymentDialog = ref(false)
 
 async function saveNewPayment(){
-  let clientName = `${props.editingClient.name} ${props.editingClient.surname}`
+  let collaboratorName = `${props.editingCollaborator.name} ${props.editingCollaborator.surname}`
   try {
     await addPayment(newPayment);
-    newSuccessMessage(`Il pagamento di ${clientName} è stato registrato`);
+    newSuccessMessage(`Il pagamento di ${collaboratorName} è stato registrato`);
     newPayment.reset();
     addPaymentDialog.value = false
     emit('saved')
   } catch (error) {
-    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${clientName} : ${error}`)
+    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${collaboratorName} : ${error}`)
   }
 }
 </script>

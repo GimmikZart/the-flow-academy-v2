@@ -21,8 +21,14 @@ export default function() {
   }
 
   const editClient = async (editClient) => {
-    editClient.dateOfBirth = new Date(editClient.dateOfBirth)
-    editClient.firstContact = new Date(editClient.firstContact)
+    console.log({editClient});
+    debugger;
+    editClient = convertUndefinedToNull(editClient)
+    debugger;
+    /* if(editClient.dateOfBirth != null) editClient.dateOfBirth = new Date(editClient.dateOfBirth) 
+    else editClient.dateOfBirth = null
+    if(editClient.firstContact != null) editClient.firstContact = new Date(editClient.firstContact)
+    else editClient.firstContact = null */
     const clientRef = await getClientReference(editClient.id);
     await updateDoc(clientRef, editClient);
   };

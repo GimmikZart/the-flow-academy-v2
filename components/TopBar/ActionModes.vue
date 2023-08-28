@@ -4,10 +4,29 @@
 
 <script setup>
 const emit = defineEmits(['change-action-mode'])
-const actionMode = ref({ name: 'Incassa', value: 3 });
-const actionsList = ref([
-                { name: 'Edita', value: 1 },
-                { name: 'Rimuovi', value: 2 },
-                { name: 'Incassa', value: 3 }
-            ]);
+/* PROPS */
+const props = defineProps(['entity'])
+
+const actionMode = ref({ name: 'Profilo', value: 4 });
+const clientsActionsList = ref([
+  { name: 'Edita', value: 1 },
+  { name: 'Rimuovi', value: 2 },
+  { name: 'Incassa', value: 3 },
+  { name: 'Profilo', value: 4}
+]);
+const collaboratorsActionsList = ref([
+  { name: 'Edita', value: 1 },
+  { name: 'Rimuovi', value: 2 },
+  { name: 'Paga', value: 3 },
+  { name: 'Profilo', value: 4}
+]);
+
+const actionsList = computed(() => {
+  switch (props.entity) {
+    case 'clients':
+      return clientsActionsList.value;
+    case 'collaborators':
+      return collaboratorsActionsList.value;
+  }
+})
 </script>

@@ -12,7 +12,7 @@
       <div class="flex items-center h-full top-tool-box">
         <!-- <SelectButton v-model="actionMode" :options="actionsList" optionLabel="name" aria-labelledby="multiple">
         </SelectButton> -->
-        <TopBarActionModes @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
+        <TopBarActionModes entity="clients" @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
         <ClientsAddNewClient @saved="loadClientsList()"></ClientsAddNewClient>
       </div>
     </section>
@@ -58,9 +58,14 @@
         </Column>
         <Column field="action"  header="Azione">
           <template #body="slotProps">
-            <ClientsEditClient v-if="actionMode == 1" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsEditClient>
+            <Button v-if="actionMode == 4" text>
+              <Icon name="carbon:user-profile" size="2rem" color="brown"></Icon>
+            </Button>
+            <ClientsEditClient v-else-if="actionMode == 1" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsEditClient>
             <ClientsRemoveClient v-else-if="actionMode == 2" :removingClient="slotProps.data" @saved="loadClientsList()"></ClientsRemoveClient>
-            <ClientsAddNewPayment v-else-if="actionMode == 3" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsAddNewPayment>
+            <ClientsAddNewPayment v-else-if="actionMode == 3 && slotProps.data.status != 2" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsAddNewPayment>
+            
+            
           </template>
         </Column>
       </DataTable>
@@ -75,7 +80,7 @@
   const { getInitials, getAge } = utility()
 
   const clients = ref();
-  const actionMode = ref(3);
+  const actionMode = ref(4);
   const clientFilter= ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },

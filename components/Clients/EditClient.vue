@@ -102,7 +102,7 @@ const emit = defineEmits(['saved'])
 const { editClient } = setClientsApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
-const { formatDate, deepCopy} = utility()
+const { formatDate, deepCopy, convertUndefinedToNull} = utility()
 /* DATA */
 const editingClientDialog = ref(false)
 const copyOfClient = reactive({value: new Client()})
@@ -110,7 +110,8 @@ const copyOfClient = reactive({value: new Client()})
 async function saveEditingClient(){
   let editingClientname = `${copyOfClient.value.name} ${copyOfClient.value.surname}`
   try {
-    await editClient(copyOfClient.value);
+    let cleanedClientFromUndefined = convertUndefinedToNull(copyOfClient.value)
+    await editClient(cleanedClientFromUndefined);
     newSuccessMessage(`${editingClientname} è stato modificato nel database`);
     editingClientDialog.value = false
     emit('saved')

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <Button size="1rem" severity="warning" rounded text @click="removingClientDialog = true">
+    <Button size="1rem" severity="warning" rounded text @click="removingCollaboratorDialog = true">
       <Icon name="material-symbols:delete" size="2rem" color="red" />
     </Button>
-    <Dialog :visible="removingClientDialog" modal :header='`Rimuovi Socio`' :style="{ width: 'auto' }">
+    <Dialog :visible="removingCollaboratorDialog" modal :header='`Rimuovi Socio`' :style="{ width: 'auto' }">
       <h3>Disiscrivere: "rimuove" il socio dalla lista dei soci attivi, ma mantiene i dati.</h3>
       <h3>Cancellare: elimina totalmente il socio dal database (l'operazione è irrevocabile)</h3>
       <template #footer>
-        <Button label="Annulla" @click="removingClientDialog = false" outlined />
+        <Button label="Annulla" @click="removingCollaboratorDialog = false" outlined />
         <Button label="Disiscrivi" severity="warning" @click="unsubscribe()" />
         <Button label="Cancella" severity="danger" @click="remove()" />
       </template>
@@ -20,39 +20,39 @@
 import { useFiltersStore } from "@/store/pill";
 import { defineProps } from 'vue'
 /* PROPS */
-const props = defineProps(['removingClient'])
+const props = defineProps(['removingCollaborator'])
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-const { unsubscribeClient , deleteClient } = setClientsApi() // auto-imported
+const { unsubscribeCollaborator , deleteCollaborator } = setCollaboratorsApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 /* DATA */
-const removingClientDialog = ref(false)
+const removingCollaboratorDialog = ref(false)
 
 async function remove(){
-  let editingClientname = `${props.removingClient.name} ${props.removingClient.surname}`
+  let editingCollaboratorname = `${props.removingCollaborator.name} ${props.removingCollaborator.surname}`
   try {
-    await deleteClient(props.removingClient);
-    newSuccessMessage(`${editingClientname} è stato rimosso dal database (operazione irrevocabile)`);
-    removingClientDialog.value = false
+    await deleteCollaborator(props.removingCollaborator);
+    newSuccessMessage(`${editingCollaboratorname} è stato rimosso dal database (operazione irrevocabile)`);
+    removingCollaboratorDialog.value = false
     emit('saved')
   } catch (error) {
     console.log({error});
-    newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DI ${editingClientname} : ${error}`)
+    newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DI ${editingCollaboratorname} : ${error}`)
   }
 }
 
 async function unsubscribe(){
-  let editingClientname = `${props.removingClient.name} ${props.removingClient.surname}`
+  let editingCollaboratorname = `${props.removingCollaborator.name} ${props.removingCollaborator.surname}`
   try {
-    await unsubscribeClient(props.removingClient);
-    newSuccessMessage(`${editingClientname} è stato correttamente disiscritto (i dati rimarranno salvati)`);
-    removingClientDialog.value = false
+    await unsubscribeCollaborator(props.removingCollaborator);
+    newSuccessMessage(`${editingCollaboratorname} è stato correttamente disiscritto (i dati rimarranno salvati)`);
+    removingCollaboratorDialog.value = false
     emit('saved')
   } catch (error) {
     console.log({error});
-    newErrorMessage(`ERRORE NELLA DISISCRIZIONE A DB DI ${editingClientname} : ${error}`)
+    newErrorMessage(`ERRORE NELLA DISISCRIZIONE A DB DI ${editingCollaboratorname} : ${error}`)
   }
 }
 

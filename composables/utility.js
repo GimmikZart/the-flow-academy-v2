@@ -71,12 +71,24 @@ export default function() {
     }
   }
 
+  function convertUndefinedToNull(obj) {
+    for (let prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+        if (obj[prop] === undefined) {
+          obj[prop] = null;
+        }
+      }
+    }
+    return obj;
+  }
+
   return {
     resolveCircularJsonError,
     getInitials,
     getAge,
     formatDate,
     deepCopy,
-    isMonthPaid
+    isMonthPaid,
+    convertUndefinedToNull
   }
 }
