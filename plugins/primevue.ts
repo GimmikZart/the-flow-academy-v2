@@ -18,6 +18,8 @@ import MultiSelect from 'primevue/multiselect';
 import Textarea from 'primevue/textarea';
 import SelectButton from 'primevue/selectbutton';
 import Dropdown from 'primevue/dropdown';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 
 export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.use(PrimeVue, { ripple: true });
@@ -39,5 +41,7 @@ export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.component("Textarea", Textarea);
   nuxtApp.vueApp.component("SelectButton", SelectButton);
   nuxtApp.vueApp.component("Dropdown", Dropdown);
+  nuxtApp.vueApp.component("TabView", TabView);
+  nuxtApp.vueApp.component("TabPanel", TabPanel);
 
 })
