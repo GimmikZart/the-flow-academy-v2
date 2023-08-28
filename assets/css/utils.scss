@@ -9,3 +9,13 @@
 .router-link-active.router-link-exact-active *{
   color: white;
 }
+
+.top-tool-box{
+  .p-selectbutton.p-buttonset.p-component{
+    height: 100%;
+    .p-button{
+      padding: 0rem 1.25rem;
+      height: 100%;
+    }
+  }
+}

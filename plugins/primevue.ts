@@ -16,6 +16,7 @@ import Tag from 'primevue/tag';
 import InputNumber from 'primevue/inputnumber';
 import MultiSelect from 'primevue/multiselect';
 import Textarea from 'primevue/textarea';
+import SelectButton from 'primevue/selectbutton';
 
 export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.use(PrimeVue, { ripple: true });
@@ -35,4 +36,6 @@ export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.component("InputNumber", InputNumber);
   nuxtApp.vueApp.component("MultiSelect", MultiSelect);
   nuxtApp.vueApp.component("Textarea", Textarea);
+  nuxtApp.vueApp.component("SelectButton", SelectButton);
+
 })

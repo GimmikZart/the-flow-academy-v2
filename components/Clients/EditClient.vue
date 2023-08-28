@@ -1,27 +1,27 @@
 <template>
   <div>
-    <Button size="small" severity="success" rounded class="mx-3" @click="addClientDialog = true">
-      <Icon name="mdi:add-bold" color="white" />
+    <Button size="1rem" severity="warning" rounded text @click="editingClientDialog = true">
+      <Icon name="material-symbols:edit" size="2rem" color="orange" />
     </Button>
-    <Dialog :visible="addClientDialog" modal header="Aggiungi Socio" :style="{ width: '50vw' }">
+    <Dialog :visible="editingClientDialog" modal header="Aggiungi Socio" :style="{ width: '50vw' }">
       <div class="grid grid-rows-10 grid-cols-4 gap-10 p-10">
         <span class="p-float-label p-input-icon-left col-span-full">
           <Icon name="radix-icons:avatar" size="20px"></Icon>
-          <InputText v-model="newClient.avatar" placeholder="Link Foto" class="w-full"></InputText>
+          <InputText v-model="editingClient.avatar" placeholder="Link Foto" class="w-full"></InputText>
           <label for="birth_date">Link Foto</label>
         </span>
         <span class="p-float-label p-input-icon-left col-span-2">
           <Icon name="clarity:avatar-line" size="20px"></Icon>
-          <InputText v-model="newClient.name" placeholder="Nome" class="w-full"></InputText>
+          <InputText v-model="editingClient.name" placeholder="Nome" class="w-full"></InputText>
           <label>Nome</label>
         </span>
         <span class="p-float-label p-input-icon-left col-span-2">
           <Icon name="clarity:avatar-line" size="20px"></Icon>
-          <InputText v-model="newClient.surname" placeholder="Cognome" class="w-full"></InputText>
+          <InputText v-model="editingClient.surname" placeholder="Cognome" class="w-full"></InputText>
           <label>Cognome</label>
         </span>
 
-        <ToggleButton v-model="newClient.gender" onLabel="Maschio" offLabel="Femmina" id="toggleGender">
+        <ToggleButton v-model="editingClient.gender" onLabel="Maschio" offLabel="Femmina" id="toggleGender">
           <template #icon="slotProps">
             <Icon v-if="slotProps.value == true" name="icon-park-solid:boy-one" color="blue"></Icon>
             <Icon v-else name="icon-park-solid:girl-one" color="red"></Icon>
@@ -30,59 +30,59 @@
           
         <span class="p-float-label p-input-icon-left col-span-3">
           <Icon name="mdi:address-marker-outline" size="20px"></Icon>
-          <InputText v-model="newClient.address" placeholder="Indirizzo" class="w-full"></InputText>
+          <InputText v-model="editingClient.address" placeholder="Indirizzo" class="w-full"></InputText>
           <label>Indirizzo</label>
         </span>
         <span class="p-float-label p-input-icon-left col-span-2">
           <Icon name="entypo:email" size="20px"></Icon>
-          <InputText v-model="newClient.email" placeholder="Email" class="w-full"></InputText>
+          <InputText v-model="editingClient.email" placeholder="Email" class="w-full"></InputText>
           <label>Email</label>
         </span>
         <span class="p-float-label p-input-icon-left col-span-2">
           <Icon name="bi:telephone" size="20px"></Icon>
-          <InputText v-model="newClient.telephone" placeholder="Telefono" class="w-full"></InputText>
+          <InputText v-model="editingClient.telephone" placeholder="Telefono" class="w-full"></InputText>
           <label>Telefono</label>
         </span>
         <span class="p-float-label col-span-2">
-          <Calendar v-model="newClient.dateOfBirth" placeholder="Data di nascita" dateFormat="dd/mm/yy" class="w-full" />
+          <Calendar v-model="editingClient.dateOfBirth" placeholder="Data di nascita" dateFormat="dd/mm/yy" class="w-full" />
           <label>Data di nascita</label>
-        </span>
+        </span> 
         <span class="p-float-label col-span-2">
-          <Calendar v-model="newClient.firstContact" placeholder="Primo Contatto" dateFormat="dd/mm/yy" class="w-full" />
+          <Calendar v-model="editingClient.firstContact" placeholder="Primo Contatto" dateFormat="dd/mm/yy" class="w-full" />
           <label>Primo Contatto</label>
         </span>
 
         <span class="p-float-label p-input-icon-left col-start-1 col-end-1">
           <Icon name="mingcute:hat-2-line" size="20px"></Icon>
-          <InputText v-model="newClient.sizes.head" placeholder="Misura cappello" class="w-full"/>
+          <InputText v-model="editingClient.sizes.head" placeholder="Misura cappello" class="w-full"/>
           <label>Misura cappello</label>
         </span>
         <span class="p-float-label p-input-icon-left col-start-2 col-end-2">
           <Icon name="ion:shirt-outline" size="20px"></Icon>
-          <InputText v-model="newClient.sizes.shirt" placeholder="Misura maglietta" class="w-full"/>
+          <InputText v-model="editingClient.sizes.shirt" placeholder="Misura maglietta" class="w-full"/>
           <label>Misura maglietta</label>
         </span>
         <span class="p-float-label p-input-icon-left col-start-3 col-end-3">
           <Icon name="ph:pants-thin" size="20px"></Icon>
-          <InputText v-model="newClient.sizes.pants" placeholder="Misura pantaloni" class="w-full"/>
+          <InputText v-model="editingClient.sizes.pants" placeholder="Misura pantaloni" class="w-full"/>
           <label>Misura pantaloni</label>
         </span>
         <span class="p-float-label p-input-icon-left col-start-4 col-end-4">
           <Icon name="mingcute:shoe-line" size="20px"></Icon>
-          <InputText v-model="newClient.sizes.shoes" placeholder="Misura scarpe" class="w-full"/>
+          <InputText v-model="editingClient.sizes.shoes" placeholder="Misura scarpe" class="w-full"/>
           <label>Misura scapre</label>
         </span>
 
 
         <span class="p-float-label p-input-icon-left col-span-4">
           <Icon name="uil:notes" size="20px"></Icon>
-          <InputText v-model="newClient.notes" placeholder="Note" class="w-full"></InputText>
+          <InputText v-model="editingClient.notes" placeholder="Note" class="w-full"></InputText>
           <label>Note</label>
         </span>
       </div>
       <template #footer>
-        <Button label="Chiudi" @click="addClientDialog = false" outlined />
-        <Button label="Salva" severity="success" @click="saveNewClient()" outlined />
+        <Button label="Chiudi" @click="editingClientDialog = false" outlined />
+        <Button label="Salva" severity="success" @click="saveEditingClient()" outlined />
       </template>
     </Dialog>
   </div>
@@ -91,27 +91,28 @@
 
 <script setup>
 import { useFiltersStore } from "@/store/pill";
-import Client from '@/assets/entities/client.js';
+/* PROPS */
+const props = defineProps(['editingClient'])
+/* EMITS */
 const emit = defineEmits(['saved'])
-const { addClient } = setClientsApi() // auto-imported
+/* COMPOSABLES */
+const { editClient } = setClientsApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
+const { formatDate} = utility()
+/* DATA */
+const editingClientDialog = ref(false)
 
-const newClient = reactive(new Client());
-const addClientDialog = ref(false)
-
-async function saveNewClient(){
-  let newClientname = `${newClient.name} ${newClient.surname}`
+async function saveEditingClient(){
+  let editingClientname = `${props.editingClient.name} ${props.editingClient.surname}`
   try {
-    await addClient(newClient);
-    newSuccessMessage(`${newClientname} è stato aggiunto al database`);
-    newClient.reset();
-    addClientDialog.value = false
+    await editClient(props.editingClient);
+    newSuccessMessage(`${editingClientname} è stato modificato nel database`);
+    editingClientDialog.value = false
     emit('saved')
-    
-    
   } catch (error) {
-    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${newClientname} : ${error}`)
+    console.log({error});
+    newErrorMessage(`ERRORE NELLA MODIFICA A DB DI ${editingClientname} : ${error}`)
   }
 }
 </script>

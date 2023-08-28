@@ -3,7 +3,10 @@
     <!-- TOP BAR -->
     <section class="w-full h-[50px] bg-white mb-5 rounded-flow p-2 flex items-center justify-between">
       <TopBarLabel label="SOCI"></TopBarLabel>
-      <div>
+      <div class="flex items-center h-full top-tool-box">
+        <!-- <SelectButton v-model="actionMode" :options="actionsList" optionLabel="name" aria-labelledby="multiple">
+        </SelectButton> -->
+        <TopBarActionModes @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
         <ClientsAddNewClient @saved="loadClientsList()"></ClientsAddNewClient>
       </div>
       
@@ -50,22 +53,12 @@
         </Column>
         <Column field="action"  header="Azione">
           <template #body="slotProps">
-            <ClientsAddNewPayment :editingClient="slotProps.data"></ClientsAddNewPayment>
-            <!-- <Button text rounded color="green" size="1rem" @click="addPayment(slotProps.data)">
-              <Icon name="ph:hand-coins" size="2rem" color="green"></Icon>
-            </Button> -->
+            <ClientsAddNewPayment v-if="actionMode == 3" :editingClient="slotProps.data"></ClientsAddNewPayment>
+            <ClientsEditClient v-else-if="actionMode == 1" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsEditClient>
           </template>
         </Column>
       </DataTable>
     </section>
-
-    
-    <!-- <Dialog v-if="addPaymentDialog" :visible="addPaymentDialog" modal :header="`Pagamento da ${editClient.value.name} ${editClient.value.surname}`" :style="{ width: '50vw' }">
-      <span class="p-float-label col-span-2">
-          <Calendar v-model="props.newClient.firstContact" placeholder="Primo Contatto" dateFormat="dd/mm/yy" class="w-full"/>
-          <label>Primo Contatto</label>
-        </span>
-    </Dialog> -->
   </nuxt-layout>
 </template>
 
@@ -75,17 +68,12 @@
   const { getInitials, getAge } = utility()
 
   const clients = ref();
-  const addPaymentDialog = ref(false);
-  const editClient = reactive({value: null})
+  const actionMode = ref(3);
 
   const loadClientsList = async () => {
     clients.value = await getClients();
   }
 
-  const addPayment = (client) => {
-    editClient.value = client
-    addPaymentDialog.value = true
-  }
 /* HOOKS */ 
   onBeforeMount(async () => {
     loadClientsList()

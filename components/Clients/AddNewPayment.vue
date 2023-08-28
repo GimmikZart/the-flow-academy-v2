@@ -15,12 +15,12 @@
         </span>
 
         <span class="p-float-label col-start-1 col-end-3">
-          <MultiSelect class="w-full" placeholder="Per le seguenti attività"></MultiSelect>
+          <MultiSelect v-model="newPayment.activities" class="w-full" placeholder="Per le seguenti attività"></MultiSelect>
           <label>Per le seguenti attività</label>
         </span>
 
         <span class="p-float-label col-start-1 col-end-3">
-          <InputText class="w-full"></InputText>
+          <InputText v-model="newPayment.notes" class="w-full"></InputText>
           <label>Note aggiuntive</label>
         </span>
       </div>
@@ -37,8 +37,6 @@
 <script setup>
 import { useFiltersStore } from "@/store/pill";
 import Payment from '@/assets/entities/payment.js';
-/* EMITS */
-const emit = defineEmits(['saved'])
 /* PROPS */
 const props = defineProps(['editingClient'])
 /* COMPOSABLES */
@@ -58,9 +56,7 @@ async function saveNewPayment(){
     newSuccessMessage(`Il pagamento di ${clientName} è stato registrato`);
     newPayment.reset();
     addPaymentDialog.value = false
-    emit('saved')
   } catch (error) {
-    console.log({error});
     newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${clientName} : ${error}`)
   }
 }

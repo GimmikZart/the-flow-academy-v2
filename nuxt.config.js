@@ -6,12 +6,18 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  devtools: { enabled: true },
+  devtools: {
+    enabled: true,
+
+    timeline: {
+      enabled: true
+    }
+  },
   modules: ['nuxt-icon', '@pinia/nuxt'],
   css: [
     "primevue/resources/themes/lara-light-blue/theme.css",
     '~/assets/css/main.css',
-    '~/assets/css/utils.css',
+    '~/assets/css/utils.scss',
   ],
   build: {
     transpile: ["primevue"]

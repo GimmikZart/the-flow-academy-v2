@@ -28,9 +28,9 @@ export default class Payment {
 
   // Metodo per resettare un oggetto Payment 
   reset() {
-    this.date = '',
-    this.person = undefined,
-    this.type = undefined,
+    this.date = new Date(),
+    this.person = null,
+    this.type = null,
     this.amount = 0,
     this.notes = '',
     this.activities = []
