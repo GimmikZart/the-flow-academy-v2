@@ -13,16 +13,16 @@ export default function() {
   }
   
   const addClient =  async (newClient) => {
-    newClient.dateOfBirth = new Date(newClient.dateOfBirth).toLocaleDateString('it-IT')
-    newClient.firstContact = new Date(newClient.firstContact).toLocaleDateString('it-IT')
+    newClient.dateOfBirth = new Date(newClient.dateOfBirth)
+    newClient.firstContact = new Date(newClient.firstContact)
     const clientOnjPlain = newClient.toPlainObject();
     await addDoc(clientsCollection, clientOnjPlain);
     return newClient;
   }
 
   const editClient = async (editClient) => {
-    editClient.dateOfBirth = new Date(editClient.dateOfBirth).toLocaleDateString('it-IT')
-    editClient.firstContact = new Date(editClient.firstContact).toLocaleDateString('it-IT')
+    editClient.dateOfBirth = new Date(editClient.dateOfBirth)
+    editClient.firstContact = new Date(editClient.firstContact)
     const clientRef = await getClientReference(editClient.id);
     await updateDoc(clientRef, editClient);
   };

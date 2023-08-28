@@ -25,38 +25,47 @@ export default function() {
 
   const getAge = (dateOfBirth) => {
     console.log({dateOfBirth});
-    if(typeof dateOfBirth == 'string'){
-      return Math.floor((new Date() - fromStringToDate(dateOfBirth)) / 31557600000);
-    } else if (typeof dateOfBirth == 'object') {
-      return Math.floor((new Date() - new Date(dateOfBirth)) / 31557600000);
-    }
-    
+    const ageInSeconds = Math.floor((new Date() / 1000) - dateOfBirth.seconds);
+    return Math.floor(ageInSeconds / 31557600);
   }
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('it-IT')
   }
 
-  function fromStringToDate(dateString) {
-    const parts = dateString.split('/');
-    if (parts.length !== 3) {
-      throw new Error('Formato data non valido');
+  function deepCopy(obj) {
+    if (typeof obj !== 'object' || obj === null) {
+      return obj;
     }
-    
-    const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1; // Mesi sono indicizzati da 0 a 11
-    const year = parseInt(parts[2], 10);
   
-    if (isNaN(day) || isNaN(month) || isNaN(year)) {
-      throw new Error('Formato data non valido');
+    if (obj instanceof Date) {
+      return new Date(obj);
     }
-    return new Date(year, month, day);
+  
+    if (obj instanceof Array) {
+      const copyArr = [];
+      for (let i = 0; i < obj.length; i++) {
+        copyArr[i] = deepCopy(obj[i]);
+      }
+      return copyArr;
+    }
+  
+    if (obj instanceof Object) {
+      const copyObj = {};
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          copyObj[key] = deepCopy(obj[key]);
+        }
+      }
+      return copyObj;
+    }
   }
 
   return {
     resolveCircularJsonError,
     getInitials,
     getAge,
-    formatDate
+    formatDate,
+    deepCopy
   }
 }
