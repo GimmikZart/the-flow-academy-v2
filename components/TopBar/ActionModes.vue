@@ -1,5 +1,5 @@
 <template>
-  <SelectButton v-model="actionMode" :options="actionsList" optionLabel="name" aria-labelledby="multiple" @change="$emit('change-action-mode', actionMode )"/>
+  <SelectButton v-model="actionMode" :options="actionsList" optionLabel="name" @change="$emit('change-action-mode', actionMode )"/>
 </template>
 
 <script setup>

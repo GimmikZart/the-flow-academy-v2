@@ -4,16 +4,19 @@
       <Icon name="mdi:add-bold" color="white" />
     </Button>
     <Dialog :visible="addCollaboratorDialog" modal header="Aggiungi Collaboratore" :style="{ width: '50vw' }">
-      <div class="grid grid-rows-10 grid-cols-4 gap-10 p-10">
+      <div class="grid grid-rows-10 grid-cols-4 gap-7 p-10">
 
         
-        <span class="p-float-label p-input-icon-left col-span-full">
+        <span class="p-float-label p-input-icon-left col-start-1 col-end-3">
           <Icon name="radix-icons:avatar" size="20px"></Icon>
           <InputText v-model="newCollaborator.avatar" disabled placeholder="Link Foto" class="w-full"></InputText>
-          <label for="birth_date">Link Foto</label>
+          <label>Link Foto</label>
         </span>
 
+        
+        <MultiSelect v-model="newCollaborator.roles" :options="roleOptions" optionLabel="Ruoli" placeholder="Seleziona ruoli" class="col-start-3 col-end-5"></MultiSelect>
 
+  
         <span class="p-float-label p-input-icon-left col-span-2">
           <Icon name="clarity:avatar-line" size="20px"></Icon>
           <InputText v-model="newCollaborator.name" placeholder="Nome" class="w-full"></InputText>
@@ -130,6 +133,7 @@ const { newSuccessMessage, newErrorMessage } = filtersStore
 
 const newCollaborator = reactive(new Collaborator());
 const addCollaboratorDialog = ref(false)
+const roleOptions = ref([])
 
 async function saveNewCollaborator(){
   let newCollaboratorname = `${newCollaborator.name} ${newCollaborator.surname}`

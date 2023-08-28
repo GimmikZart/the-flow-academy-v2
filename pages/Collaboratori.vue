@@ -10,9 +10,7 @@
       </span>
       
       <div class="flex items-center h-full top-tool-box">
-        <!-- <SelectButton v-model="actionMode" :options="actionsList" optionLabel="name" aria-labelledby="multiple">
-        </SelectButton> -->
-        <TopBarActionModes entity="collaborators" @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
+        <TopBarActionModes entity="collaborators" @change-action-mode="(newMode) => actionMode = newMode.value" ></TopBarActionModes>
         <CollaboratorsAddNewCollaborator @saved="loadCollaboratorsList()"></CollaboratorsAddNewCollaborator>
       </div>
     </section>
@@ -40,7 +38,7 @@
           </template>
           
         </Column>
-        <Column field="activities" header="Iscrizioni" sortable >
+        <Column field="activities" header="Attività" sortable >
           <template #body="slotProps">
             {{ slotProps.data.activities.length }}
           </template>
