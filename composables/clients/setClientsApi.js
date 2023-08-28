@@ -1,4 +1,4 @@
-import { getFirestore, collection, addDoc, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 
 
@@ -13,8 +13,8 @@ export default function() {
   }
   
   const addClient =  async (newClient) => {
-    newClient.dateOfBirth = new Date(newClient.dateOfBirth)
-    newClient.firstContact = new Date(newClient.firstContact)
+    if(newClient.dateOfBirth != null) newClient.dateOfBirth = new Date(newClient.dateOfBirth) 
+    if(newClient.firstContact != null) newClient.firstContact = new Date(newClient.firstContact)
     const clientOnjPlain = newClient.toPlainObject();
     await addDoc(clientsCollection, clientOnjPlain);
     return newClient;
@@ -25,6 +25,18 @@ export default function() {
     editClient.firstContact = new Date(editClient.firstContact)
     const clientRef = await getClientReference(editClient.id);
     await updateDoc(clientRef, editClient);
+  };
+
+  const deleteClient = async (removeClient) => {
+    const clientRef = await getClientReference(removeClient.id);
+    await deleteDoc(clientRef);
+  };
+
+  const unsubscribeClient = async (unsubscribeClient) => {
+    unsubscribeClient.status = 2
+    unsubscribeClient.activities = []
+    const clientRef = await getClientReference(unsubscribeClient.id);
+    await updateDoc(clientRef, unsubscribeClient);
   };
 
   const addPayment = async (newPayment) => {
@@ -38,6 +50,8 @@ export default function() {
   return {
     addClient,
     addPayment,
-    editClient
+    editClient,
+    deleteClient,
+    unsubscribeClient
   }
 }

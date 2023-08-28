@@ -3,18 +3,23 @@
     <!-- TOP BAR -->
     <section class="w-full h-[50px] bg-white mb-5 rounded-flow p-2 flex items-center justify-between">
       <TopBarLabel label="SOCI"></TopBarLabel>
+      
+      <span class="p-input-icon-left h-full w-2/6">
+        <Icon name="ic:twotone-search" size="20px"/>
+        <InputText v-model="clientFilter['global'].value" placeholder="Filtra soci" class="h-full w-full"/>
+      </span>
+      
       <div class="flex items-center h-full top-tool-box">
         <!-- <SelectButton v-model="actionMode" :options="actionsList" optionLabel="name" aria-labelledby="multiple">
         </SelectButton> -->
         <TopBarActionModes @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
         <ClientsAddNewClient @saved="loadClientsList()"></ClientsAddNewClient>
       </div>
-      
     </section>
 
     <!-- CONTENT -->
     <section class="w-full flex-grow border-4 border-white rounded-flow overflow-hidden">
-      <DataTable resizableColumns columnResizeMode="fit" :value="clients" tableStyle="min-width: 50rem" removableSort  stripedRows class="p-datatable-sm" sortMode="multiple">
+      <DataTable :filters="clientFilter" filterDisplay="row" :globalFilterFields="['name', 'surname']" resizableColumns columnResizeMode="fit" :value="clients" tableStyle="min-width: 50rem" removableSort  stripedRows class="p-datatable-sm" sortMode="multiple">
         <Column field="avatar" header="Avatar">
           <template #body="slotProps">
             <Avatar v-if="slotProps.data.avatar != ''" :image="slotProps.data.avatar" class="mr-2" size="large" shape="circle" />
@@ -25,8 +30,8 @@
         <Column field="surname" header="Cognome" sortable ></Column>
         <Column field="gender" header="Sesso" sortable >
           <template #body="slotProps">
-            <Icon v-if="slotProps.data.gender == true" name="icon-park-solid:boy-one" color="blue"></Icon>
-            <Icon v-else name="icon-park-solid:girl-one" color="red"></Icon>
+            <Icon v-if="slotProps.data.gender == true" name="icon-park-solid:boy-one" color="blue" size="2rem"></Icon>
+            <Icon v-else name="icon-park-solid:girl-one" color="red" size="2rem"></Icon>
           </template>
         </Column>
         <Column field="dateOfBirth" header="Età" sortable>
@@ -53,8 +58,9 @@
         </Column>
         <Column field="action"  header="Azione">
           <template #body="slotProps">
-            <ClientsAddNewPayment v-if="actionMode == 3" :editingClient="slotProps.data"></ClientsAddNewPayment>
-            <ClientsEditClient v-else-if="actionMode == 1" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsEditClient>
+            <ClientsEditClient v-if="actionMode == 1" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsEditClient>
+            <ClientsRemoveClient v-else-if="actionMode == 2" :removingClient="slotProps.data" @saved="loadClientsList()"></ClientsRemoveClient>
+            <ClientsAddNewPayment v-else-if="actionMode == 3" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsAddNewPayment>
           </template>
         </Column>
       </DataTable>
@@ -64,11 +70,17 @@
 
 <script setup>
   import { ref, onBeforeMount  } from 'vue';
+  import { FilterMatchMode } from 'primevue/api';
   const { getClients } = getClientsApi() // auto-imported
   const { getInitials, getAge } = utility()
 
   const clients = ref();
   const actionMode = ref(3);
+  const clientFilter= ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    surname: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
+  })
 
   const loadClientsList = async () => {
     clients.value = await getClients();

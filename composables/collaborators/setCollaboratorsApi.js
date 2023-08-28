@@ -3,31 +3,52 @@ import { getFirestore, collection, addDoc, doc } from 'firebase/firestore';
 
 
 export default function() {
-  // Ottieni un riferimento alla collezione "clients"
-  const clientsCollection = collection(getFirestore(), 'clients');
+  // Ottieni un riferimento alla collezione "collaborators"
+  const collaboratorsCollection = collection(getFirestore(), 'collaborators');
   // Ottieni un riferimento alla collezione "payments"
   const paymentsCollection = collection(getFirestore(), 'payments');
-  // Ottieni un riferimento a un documento di clients
-  const getClientReference = async (clientId) => {
-    return await doc(getFirestore(), 'clients', clientId);
+  // Ottieni un riferimento a un documento di collaborators
+  const getCollaboratorReference = async (collaboratorId) => {
+    return await doc(getFirestore(), 'collaborators', collaboratorId);
   }
   
-  const addClient =  async (newClient) => {
-    const clientOnjPlain = newClient.toPlainObject();
-    await addDoc(clientsCollection, clientOnjPlain);
-    return newClient;
+  const addCollaborator =  async (newCollaborator) => {
+    const collaboratorOnjPlain = newCollaborator.toPlainObject();
+    await addDoc(collaboratorsCollection, collaboratorOnjPlain);
+    return newCollaborator;
   }
 
+  const editCollaborator = async (editCollaborator) => {
+    editCollaborator.dateOfBirth = new Date(editCollaborator.dateOfBirth)
+    editCollaborator.firstContact = new Date(editCollaborator.firstContact)
+    const collaboratorRef = await getCollaboratorReference(editCollaborator.id);
+    await updateDoc(collaboratorRef, editCollaborator);
+  };
+
+  const deleteCollaborator = async (removeCollaborator) => {
+    const collaboratorRef = await getCollaboratorReference(removeCollaborator.id);
+    await deleteDoc(collaboratorRef);
+  };
+
+  const unsubscribeCollaborator = async (unsubscribeCollaborator) => {
+    unsubscribeCollaborator.status = 2
+    unsubscribeCollaborator.activities = []
+    const collaboratorRef = await getCollaboratorReference(unsubscribeCollaborator.id);
+    await updateDoc(collaboratorRef, unsubscribeCollaborator);
+  };
+
   const addPayment = async (newPayment) => {
-    newPayment.person = await getClientReference(newPayment.person.id);
+    newPayment.person = await getCollaboratorReference(newPayment.person.id);
     const paymentOnjPlain = newPayment.toPlainObject();
     await addDoc(paymentsCollection, paymentOnjPlain);
-    console.log({paymentOnjPlain});
     return newPayment;
   }
 
   return {
-    addClient,
-    addPayment
+    addCollaborator,
+    addPayment,
+    editCollaborator,
+    deleteCollaborator,
+    unsubscribeCollaborator
   }
 }

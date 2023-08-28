@@ -15,7 +15,7 @@ export default function() {
   };
 
   const resolveCircularJsonError = (circObj) => {
-    return JSON.parse(JSON.stringify(clientsData, replacerFunc()))
+    return JSON.parse(JSON.stringify(circObj, replacerFunc()))
   }
 
   const getInitials = (name, surname) => {
@@ -24,9 +24,19 @@ export default function() {
   }
 
   const getAge = (dateOfBirth) => {
-    console.log({dateOfBirth});
-    const ageInSeconds = Math.floor((new Date() / 1000) - dateOfBirth.seconds);
-    return Math.floor(ageInSeconds / 31557600);
+    if(dateOfBirth){
+      console.log({dateOfBirth});
+      const ageInSeconds = Math.floor((new Date() / 1000) - dateOfBirth.seconds);
+      return Math.floor(ageInSeconds / 31557600);
+    } else {
+      return "---"
+    }
+  }
+
+  function isMonthPaid(lastPaymentDate) {
+    let today = new Date();
+    let lastPaymentDateObj = new Date(lastPaymentDate.seconds * 1000)
+    return today.getFullYear() === lastPaymentDateObj.getFullYear() && today.getMonth() === lastPaymentDateObj.getMonth();
   }
 
   const formatDate = (date) => {
@@ -66,6 +76,7 @@ export default function() {
     getInitials,
     getAge,
     formatDate,
-    deepCopy
+    deepCopy,
+    isMonthPaid
   }
 }
