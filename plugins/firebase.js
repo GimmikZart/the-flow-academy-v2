@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from "firebase/auth"
 import { getFirestore, doc, collection, query, where, getDocs, getDoc } from 'firebase/firestore'
-import { getStorage } from 'firebase/storage'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 //import { getAnalytics } from "firebase/analytics"
 
 export default defineNuxtPlugin(nuxtApp => {
@@ -24,30 +24,33 @@ export default defineNuxtPlugin(nuxtApp => {
     const firestore = getFirestore(app)
     const storage = getStorage(app)
 
-    nuxtApp.vueApp.provide('auth', auth)
-    nuxtApp.provide('auth', auth)
+    nuxtApp.provide('firebase', {
+      firestore,
+      auth,
+      storage,
+      getDocs,
+      getDoc,
+      doc,
+      collection,
+      query,
+      where,
+      ref,
+      uploadBytes,
+      getDownloadURL
+    })
 
-    nuxtApp.vueApp.provide('firestore', firestore)
-    nuxtApp.provide('firestore', firestore)
-
-    nuxtApp.vueApp.provide('storage', storage)
-    nuxtApp.provide('storage', storage)
-
-    nuxtApp.vueApp.provide('getDocs', getDocs)
-    nuxtApp.provide('getDocs', getDocs)
-
-    nuxtApp.vueApp.provide('getDoc', getDoc)
-    nuxtApp.provide('getDoc', getDoc)
-    
-    nuxtApp.vueApp.provide('doc', doc)
-    nuxtApp.provide('doc', doc)
-
-    nuxtApp.vueApp.provide('collection', collection)
-    nuxtApp.provide('collection', collection)
-
-    nuxtApp.vueApp.provide('query', query)
-    nuxtApp.provide('query', query)
-
-    nuxtApp.vueApp.provide('where', where)
-    nuxtApp.provide('where', where)
+    nuxtApp.vueApp.provide('firebase', {
+      firestore,
+      auth,
+      storage,
+      getDocs,
+      getDoc,
+      doc,
+      collection,
+      query,
+      where,
+      ref,
+      uploadBytes,
+      getDownloadURL
+    })
 })

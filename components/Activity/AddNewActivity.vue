@@ -9,6 +9,8 @@
 
         <!-- <FileUploader  class="col-start-1 col-end-5"/> -->
 
+        <FileUpload ref="fileInput" mode="basic" name="demo[]" url="./upload.php" accept="image/*" :maxFileSize="1000000" customUpload @uploader="firestoreUpload" />
+
         <span class="p-float-label p-input-icon-left col-start-1 col-end-3">
           <Icon name="clarity:avatar-line" size="20px"></Icon>
           <InputText v-model="newActivity.name" placeholder="Nome" class="w-full"></InputText>
@@ -19,7 +21,6 @@
           <label>Seleziona collaboratori</label>
         </span>
 
-        
         <span class="p-float-label col-start-1 col-end-2">
           <Dropdown v-model="newActivity.category" :options="categoriesList" optionLabel="name" placeholder="Categoria" class="w-full" />
           <label for="birth_date">Categoria</label>
@@ -38,20 +39,14 @@
           <Icon name="ant-design:eye-invisible-outlined" size="20px"></Icon>
         </span>
 
-        
-
         <span class="p-float-label p-input-icon-left col-start-1 col-end-5">
           <Icon name="radix-icons:avatar" size="20px"></Icon>
           <Textarea v-model="newActivity.avatar" placeholder="Interno" class="w-full"></Textarea>
           <label for="birth_date">Descrizione</label>
         </span>
-
-        
-        
-        
-        
       </div>
       <template #footer>
+        <Button @click="test()">test</Button>
         <Button label="Chiudi" @click="addActivityDialog = false" outlined />
         <Button label="Salva" severity="success" @click="saveNewActivity()" outlined />
       </template>
@@ -61,6 +56,10 @@
 </template>
 
 <script setup>
+import { ref, inject } from 'vue';
+const firebase = inject('firebase');
+
+
 import { useFiltersStore } from "@/store/pill";
 import Activity from '@/assets/entities/activity.js';
 const emit = defineEmits(['saved'])
@@ -68,13 +67,36 @@ const { addActivity } = setActivitiesApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
+
+function test(){
+  console.log();
+}
+async function firestoreUpload(event){
+  const file = event.files[0];
+  const storageRef = firebase.ref(firebase.storage, 'activities/' + file.name);
+  try {
+    // Caricamento del file nel bucket di Storage
+    await firebase.uploadBytes(storageRef, file);
+    
+    // Ottenere l'URL pubblico del file appena caricato
+    const downloadUrl = await firebase.getDownloadURL(storageRef);
+    console.log('File uploaded:', downloadUrl);
+  } catch (error) {
+    console.error('Error uploading file:', error);
+  }
+}
+
 const newActivity = reactive(new Activity());
 const addActivityDialog = ref(false)
+const fileInput = ref(null)
 
 async function saveNewActivity(){
   let newActivityname = `${newActivity.name} ${newActivity.surname}`
   try {
     await addActivity(newActivity);
+    console.log(fileInput.value);
+    console.log(fileInput.value.upload());
+    await fileInput.value.upload()
     newSuccessMessage(`${newActivityname} è stato aggiunto al database`);
     newActivity.reset();
     addActivityDialog.value = false

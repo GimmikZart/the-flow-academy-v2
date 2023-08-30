@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   postcss: {
     plugins: {
       tailwindcss: {},
-      autoprefixer: {},
+      autoprefixer: {}
     },
   },
   devtools: {
@@ -13,7 +13,10 @@ export default defineNuxtConfig({
       enabled: true
     }
   },
-  modules: ['nuxt-icon', '@pinia/nuxt'],
+  modules: ['nuxt-icon', '@pinia/nuxt', '@nuxtjs/cloudinary'],
+  cloudinary: {
+    cloudName: 'dbquiu1jo',
+  },
   css: [
     "primevue/resources/themes/lara-light-blue/theme.css",
     '~/assets/css/main.css',

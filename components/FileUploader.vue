@@ -6,17 +6,17 @@
             <div class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2">
                 <div class="flex gap-2">
                     <Button @click="chooseCallback()" rounded outlined class="p-2">
-                      <Icon name="ion:image" size="1rem"></Icon>
+                        <Icon name="ion:image" size="1rem"></Icon>
                     </Button>
                     <Button @click="uploadEvent(uploadCallback)" rounded outlined severity="success" :disabled="!files || files.length === 0" class="p-2">
-                      <Icon name="ep:upload-filled" size="1rem"></Icon>
+                        <Icon name="ep:upload-filled" size="1rem"></Icon>
                     </Button>
                     <Button @click="clearCallback()" rounded outlined severity="danger" :disabled="!files || files.length === 0" class="p-2">
-                      <Icon name="material-symbols:delete-outline" size="1rem"></Icon>
+                        <Icon name="material-symbols:delete-outline" size="1rem"></Icon>
                     </Button>
                 </div>
                 <ProgressBar :value="totalSizePercent" :showValue="false">
-                  <span class="white-space-nowrap">{{ totalSize }}B / 1Mb</span>
+                    <span class="white-space-nowrap">{{ totalSize }}B / 1Mb</span>
                 </ProgressBar>
             </div>
         </template>
@@ -32,7 +32,7 @@
                         <div>{{ formatSize(file.size) }}</div>
                         <Badge value="Pending" severity="warning" />
                         <Button @click="onRemoveTemplatingFile(file, removeFileCallback, index)" outlined rounded class="p-3"  severity="danger">
-                          <Icon name="iwwa:delete" size="1rem"></Icon>
+                            <Icon name="iwwa:delete" size="1rem"></Icon>
                         </Button>
                     </div>
                 </div>

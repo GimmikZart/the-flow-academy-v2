@@ -21,6 +21,7 @@
     "vue-cli-plugin-pinia": "~0.2.4"
   },
   "dependencies": {
+    "@nuxtjs/cloudinary": "^2.3.2",
     "@pinia/nuxt": "^0.4.11",
     "firebase": "^10.3.0",
     "pinia": "^2.1.6",
