@@ -2,58 +2,27 @@ import { getFirestore, doc, collection, query, where, getDocs, getDoc } from 'fi
 
 export default function() {
 
-  const getClients =  async () => {
-    console.log('YAAAAHOOOOOOO');
-    const querySnapshot = await getDocs(collection(getFirestore(), "clients"));
+  const getActivityCategoryList =  async () => {
+    const querySnapshot = await getDocs(collection(getFirestore(), "activityCategories"));
     
-    const clientsData = await Promise.all(querySnapshot.docs.map(async (doc) => {
-      const client = doc.data();
+    const activityCategoryData = await Promise.all(querySnapshot.docs.map(async (doc) => {
+      const activityCategory = doc.data();
 
-      client.id = doc.id
-      
-      /* ACTIVITY REFERENCES */
-      const activities = await Promise.all(client.activities.map(async (activity) => {
-        const activityDocument = await getOneDoc(activity.id, 'activities');
-        return activityDocument;
-      }));
-      client.activities = activities;
+      activityCategory.id = doc.id
 
-      /* PAYMENTS REFERENCES */
-      const payments = await Promise.all(client.payments.map(async (payment) => {
-
-        const paymentDocument = await getOneDoc(payment.id, 'payments');
-
-        //activities in payment
-        const activities = await Promise.all(paymentDocument.activities.map(async (activity) => {
-          const activityDocument = await getOneDoc(activity.id, 'activities');
-          return activityDocument;
-        }));
-        //person in payment
-        const person = await getOneDoc(paymentDocument.person.id, 'clients');
-        const personToInject = {
-          name: person.name,
-          surname: person.surname
-        }
-        paymentDocument.activities = activities
-        paymentDocument.person = personToInject
-
-        return paymentDocument;
-      }));
-      
-      client.payments = payments;
-
-      return client;
+      return activityCategory;
     }));
-    return clientsData;
+    return activityCategoryData;
   }
 
-  async function getOneDoc(id, collection){
-    const docRef = doc(getFirestore(), collection, id);
+  async function getOneActivityCategory(id){
+    const docRef = doc(getFirestore(), 'activiryCategories', id);
     const docSnap = await getDoc(docRef);
     return docSnap.data()
   }
 
   return {
-    getClients
+    getActivityCategoryList,
+    getOneActivityCategory
   }
 }

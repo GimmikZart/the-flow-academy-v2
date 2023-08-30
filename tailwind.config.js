@@ -20,6 +20,7 @@ module.exports = {
       'gray-dark': '#273444',
       'gray': '#8492a6',
       'light-gray': '#EFF3F8',
+      'input-light-gray': '#ced4da',
       'flow-brown': '#B06C2E',
       'hard-pink': 'rgb(252, 121, 142)'
     },
@@ -44,7 +45,11 @@ module.exports = {
       widest: '.1em',
       widest: '.25em'
     },
-    extend: {},
+    extend: {
+      zIndex: {
+        'top': '1000000',
+      }
+    },
   },
   plugins: [],
 }

@@ -2,11 +2,12 @@
   <nuxt-layout name="app-layout">
     <!-- TOP BAR -->
     <section class="w-full h-[50px] bg-white mb-5 rounded-flow p-2 flex items-center justify-between">
-      <TopBarLabel label="ATTIVITA"></TopBarLabel>
-        <Button size="small" severity="info" rounded class="mx-3 h-full">
-          <Icon name="carbon:ibm-secure-infrastructure-on-vpc-for-regulated-industries" size="1rem" color="white"></Icon>
-          <span class="ml-3">Categorie</span>
-        </Button>
+      <TopBarLabel label="ATTIVITA APERTE"></TopBarLabel>
+      <div class="flex h-full">
+        <ActivityCategoryDialog></ActivityCategoryDialog>
+        <ActivityDialog></ActivityDialog>
+      </div>
+      
       
     </section>
 
@@ -18,6 +19,14 @@
         <Column field="activities" header="Sub-attività"></Column>
         <Column field="clients" header="Soci iscritti"></Column>
         <Column field="collaborators" header="Collaboratori attivi"></Column>
+        <Column field="action" header="Azione">
+          <template #body="slotProps">
+            <Button text>
+              <Icon name="carbon:user-profile" size="2rem" color="brown"></Icon>
+            </Button>
+          </template>
+          
+        </Column>
       </DataTable>
     </section>
   </nuxt-layout>

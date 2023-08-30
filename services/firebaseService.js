@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, collection, query, where, getDocs, getDoc } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBN6ZAr6HRnOTk3Hs1a4sYH7bjNUkU_Ack",
@@ -11,8 +12,9 @@ const firebaseConfig = {
   measurementId: "G-JWZNL0D3FH"
 };
 
-const app = initializeApp(firebaseConfig)
+export const app = initializeApp(firebaseConfig)
 export const firestore = getFirestore(app);
+export const storage = getStorage(app)
 
 export const doc = doc();
 export const collection = collection();
@@ -20,3 +22,4 @@ export const query = query();
 export const where = where();
 export const getDocs = getDocs();
 export const getDoc = getDoc();
+

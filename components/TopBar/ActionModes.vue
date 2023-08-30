@@ -7,18 +7,23 @@ const emit = defineEmits(['change-action-mode'])
 /* PROPS */
 const props = defineProps(['entity'])
 
-const actionMode = ref({ name: 'Profilo', value: 4 });
+const actionMode = ref({ name: 'Visita', value: 4 });
 const clientsActionsList = ref([
   { name: 'Edita', value: 1 },
   { name: 'Rimuovi', value: 2 },
   { name: 'Incassa', value: 3 },
-  { name: 'Profilo', value: 4}
+  { name: 'Visita', value: 4}
 ]);
 const collaboratorsActionsList = ref([
   { name: 'Edita', value: 1 },
   { name: 'Rimuovi', value: 2 },
   { name: 'Paga', value: 3 },
-  { name: 'Profilo', value: 4}
+  { name: 'Visita', value: 4}
+]);
+const activityActionsList = ref([
+  { name: 'Edita', value: 1 },
+  { name: 'Rimuovi', value: 2 },
+  { name: 'Visita', value: 4}
 ]);
 
 const actionsList = computed(() => {
@@ -27,6 +32,8 @@ const actionsList = computed(() => {
       return clientsActionsList.value;
     case 'collaborators':
       return collaboratorsActionsList.value;
+    case 'activity':
+      return activityActionsList.value;
   }
 })
 </script>

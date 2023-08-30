@@ -3,61 +3,33 @@ import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc } from 'fir
 
 
 export default function() {
-  // Ottieni un riferimento alla collezione "clients"
-  const clientsCollection = collection(getFirestore(), 'clients');
-  // Ottieni un riferimento alla collezione "payments"
-  const paymentsCollection = collection(getFirestore(), 'payments');
-  // Ottieni un riferimento a un documento di clients
-  const getClientReference = async (clientId) => {
-    return await doc(getFirestore(), 'clients', clientId);
+  // Ottieni un riferimento alla collezione "activityCategorys"
+  const activityCategoriesCollection = collection(getFirestore(), 'activityCategories');
+  // Ottieni un riferimento a un documento di activityCategorys
+  const getActivityCategoryReference = async (activityCategoryId) => {
+    return await doc(getFirestore(), 'activityCategories', activityCategoryId);
   }
   
-  const addClient =  async (newClient) => {
-    if(newClient.dateOfBirth != null) newClient.dateOfBirth = new Date(newClient.dateOfBirth) 
-    if(newClient.firstContact != null) newClient.firstContact = new Date(newClient.firstContact)
-    const clientOnjPlain = newClient.toPlainObject();
-    await addDoc(clientsCollection, clientOnjPlain);
-    return newClient;
+  const addActivityCategory =  async (newActivityCategory) => {
+    const activityCategoryOnjPlain = newActivityCategory.toPlainObject();
+    console.log({activityCategoryOnjPlain});
+    await addDoc(activityCategoriesCollection, activityCategoryOnjPlain);
+    return newActivityCategory;
   }
 
-  const editClient = async (editClient) => {
-    console.log({editClient});
-    debugger;
-    editClient = convertUndefinedToNull(editClient)
-    debugger;
-    /* if(editClient.dateOfBirth != null) editClient.dateOfBirth = new Date(editClient.dateOfBirth) 
-    else editClient.dateOfBirth = null
-    if(editClient.firstContact != null) editClient.firstContact = new Date(editClient.firstContact)
-    else editClient.firstContact = null */
-    const clientRef = await getClientReference(editClient.id);
-    await updateDoc(clientRef, editClient);
+  const editActivityCategory = async (editActivityCategory) => {
+    const activityCategoryRef = await getActivityCategoryReference(editActivityCategory.id);
+    await updateDoc(activityCategoryRef, editActivityCategory);
   };
 
-  const deleteClient = async (removeClient) => {
-    const clientRef = await getClientReference(removeClient.id);
-    await deleteDoc(clientRef);
+  const deleteActivityCategory = async (activityCategoryToRemove) => {
+    const activityCategoryRef = await getActivityCategoryReference(activityCategoryToRemove.id);
+    await deleteDoc(activityCategoryRef);
   };
-
-  const unsubscribeClient = async (unsubscribeClient) => {
-    unsubscribeClient.status = 2
-    unsubscribeClient.activities = []
-    const clientRef = await getClientReference(unsubscribeClient.id);
-    await updateDoc(clientRef, unsubscribeClient);
-  };
-
-  const addPayment = async (newPayment) => {
-    newPayment.person = await getClientReference(newPayment.person.id);
-    const paymentOnjPlain = newPayment.toPlainObject();
-    await addDoc(paymentsCollection, paymentOnjPlain);
-    console.log({paymentOnjPlain});
-    return newPayment;
-  }
 
   return {
-    addClient,
-    addPayment,
-    editClient,
-    deleteClient,
-    unsubscribeClient
+    addActivityCategory,
+    editActivityCategory,
+    deleteActivityCategory
   }
 }

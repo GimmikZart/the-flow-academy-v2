@@ -1,5 +1,5 @@
 <template>
-  <section id="pill" class="w-full h-[50px] mt-5 flex justify-center">
+  <section id="pill" class="w-full h-[50px] mt-5 flex justify-center z-top">
     <div>
       <div class="h-full flex grow overflow-hidden">
         <div class="w-[175px] h-full rounded-l-[30px] bg-white flex items-center pl-3 border-r-2">

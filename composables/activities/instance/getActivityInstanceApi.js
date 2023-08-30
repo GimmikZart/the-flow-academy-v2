@@ -5,7 +5,6 @@ export default function() {
   const activityInstanceCollection = collection(getFirestore(), 'activityInstances');
 
   const getActivityInstanceList =  async () => {
-    console.log('YAAAAHOOOOOOO');
     const querySnapshot = await getDocs(activityInstanceCollection);
     const activityInstanceData = await Promise.all(querySnapshot.docs.map(async (doc) => {
       const instance =  doc.data();

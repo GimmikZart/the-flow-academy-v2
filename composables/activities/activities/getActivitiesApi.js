@@ -2,49 +2,38 @@ import { getFirestore, doc, collection, query, where, getDocs, getDoc } from 'fi
 
 export default function() {
 
-  const getClients =  async () => {
+  const getActivities =  async () => {
     console.log('YAAAAHOOOOOOO');
-    const querySnapshot = await getDocs(collection(getFirestore(), "clients"));
+    const querySnapshot = await getDocs(collection(getFirestore(), "activities"));
     
-    const clientsData = await Promise.all(querySnapshot.docs.map(async (doc) => {
-      const client = doc.data();
+    const activitiesData = await Promise.all(querySnapshot.docs.map(async (doc) => {
+      const activity = doc.data();
 
-      client.id = doc.id
-      
-      /* ACTIVITY REFERENCES */
-      const activities = await Promise.all(client.activities.map(async (activity) => {
-        const activityDocument = await getOneDoc(activity.id, 'activities');
-        return activityDocument;
+      activity.id = doc.id
+      /* COLLABORATORS REFERENCES */
+      const collaborators = await Promise.all(activity.collaborators.map(async (collaborator) => {
+        console.log(collaborator.id);
+        const collaboratorDocument = await getOneDoc(collaborator.id, 'collaborators');
+        return {
+          name: collaboratorDocument.name,
+          surname: collaboratorDocument.surname,
+          id: collaboratorDocument.id
+        };
       }));
-      client.activities = activities;
+      activity.collaborators = collaborators;
 
-      /* PAYMENTS REFERENCES */
-      const payments = await Promise.all(client.payments.map(async (payment) => {
-
-        const paymentDocument = await getOneDoc(payment.id, 'payments');
-
-        //activities in payment
-        const activities = await Promise.all(paymentDocument.activities.map(async (activity) => {
-          const activityDocument = await getOneDoc(activity.id, 'activities');
-          return activityDocument;
-        }));
-        //person in payment
-        const person = await getOneDoc(paymentDocument.person.id, 'clients');
-        const personToInject = {
-          name: person.name,
-          surname: person.surname
-        }
-        paymentDocument.activities = activities
-        paymentDocument.person = personToInject
-
-        return paymentDocument;
+      /* INSTANCES REFERENCES */
+      const instances = await Promise.all(activity.instances.map(async (instance) => {
+        console.log(instance.id);
+        const instanceDocument = await getOneDoc(instance.id, 'activityInstances');
+        return instanceDocument;
       }));
       
-      client.payments = payments;
+      activity.instances = instances.length;
 
-      return client;
+      return activity;
     }));
-    return clientsData;
+    return activitiesData;
   }
 
   async function getOneDoc(id, collection){
@@ -53,7 +42,13 @@ export default function() {
     return docSnap.data()
   }
 
+  async function test(){
+    const docRef = doc(getFirestore(), 'collaborators', 'DtkIoEQOjDelZzNYp8yf');
+    const docSnap = await getDoc(docRef);
+    return docSnap.data()
+  }
+
   return {
-    getClients
+    getActivities
   }
 }
