@@ -13,7 +13,7 @@ export default defineNuxtConfig({
       enabled: true
     }
   },
-  modules: ['nuxt-icon', '@pinia/nuxt', '@nuxtjs/cloudinary'],
+  modules: ['nuxt-icon', '@pinia/nuxt','@nuxtjs/supabase'],
   cloudinary: {
     cloudName: 'dbquiu1jo',
   },

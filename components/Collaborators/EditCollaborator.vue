@@ -119,17 +119,15 @@
 <script setup>
 import { useFiltersStore } from "@/store/pill";
 import Collaborator from '@/assets/entities/collaborator.js';
-//import { onBeforeMount  } from 'vue';
+import { onBeforeMount  } from 'vue';
 import { defineProps, watch } from 'vue'
 /* PROPS */
 const props = defineProps(['editingCollaborator'])
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-const { editCollaborator } = setCollaboratorsApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
-const { formatDate, deepCopy, convertUndefinedToNull} = utility()
 /* DATA */
 const editingCollaboratorDialog = ref(false)
 const copyOfCollaborator = reactive({value: new Collaborator()})
@@ -137,8 +135,6 @@ const copyOfCollaborator = reactive({value: new Collaborator()})
 async function saveEditingCollaborator(){
   let editingCollaboratorname = `${copyOfCollaborator.value.name} ${copyOfCollaborator.value.surname}`
   try {
-    let cleanedCollaboratorFromUndefined = convertUndefinedToNull(copyOfCollaborator.value)
-    await editCollaborator(cleanedCollaboratorFromUndefined);
     newSuccessMessage(`${editingCollaboratorname} è stato modificato nel database`);
     editingCollaboratorDialog.value = false
     emit('saved')
@@ -149,14 +145,10 @@ async function saveEditingCollaborator(){
 }
 
 watch(() => props.editingCollaborator, () => {
-  console.log('wooooo');
   setCollaboratorToEdit()
 });
 
 const setCollaboratorToEdit = () => {
-  console.log('CAAAAAMBIOOOOOO');
-  console.log(props.editingCollaborator);
-  copyOfCollaborator.value = deepCopy(props.editingCollaborator)
   if (copyOfCollaborator.value.dateOfBirth != null) {
     copyOfCollaborator.value.dateOfBirth = new Date(copyOfCollaborator.value.dateOfBirth.seconds * 1000)
   }  else {
@@ -167,7 +159,6 @@ const setCollaboratorToEdit = () => {
   } else {
     copyOfCollaborator.value.firstContact = undefined
   }
-  
 }
 
 /* HOOKS */ 

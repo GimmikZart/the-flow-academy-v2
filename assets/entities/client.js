@@ -10,9 +10,7 @@ export default class Client {
                 sizes = { head: '', pants: '', shirt: '', shoes: ''},
                 notes = '',
                 firstContact = new Date(),
-                status = 0,
-                activities = [], 
-                payments = [], ) {
+                status = 0 ) {
     this.avatar = avatar,
     this.name = name;
     this.surname = surname;
@@ -21,9 +19,7 @@ export default class Client {
     this.telephone = telephone, 
     this.dateOfBirth = dateOfBirth, 
     this.address = address, 
-    this.firstContact = firstContact, 
-    this.activities = activities, 
-    this.payments = payments, 
+    this.firstContact = firstContact,
     this.sizes = sizes, 
     this.status = status, 
     this.notes = notes
@@ -41,8 +37,6 @@ export default class Client {
       dateOfBirth: this.dateOfBirth,
       address: this.address,
       firstContact: this.firstContact,
-      activities: this.activities,
-      payments: this.payments,
       sizes: this.sizes,
       status: this.status,
       notes: this.notes
@@ -62,8 +56,6 @@ export default class Client {
     this.sizes = { head: '', pants: '', shirt: '', shoes: ''},
     this.notes = '',
     this.firstContact = new Date(),
-    this.status = 0,
-    this.activities = [], 
-    this.payments = []
+    this.status = 0
   }
 }

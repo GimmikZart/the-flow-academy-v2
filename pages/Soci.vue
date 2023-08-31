@@ -40,17 +40,17 @@
           </template>
           
         </Column>
-        <Column field="activities" header="Iscrizioni" sortable >
+        <!-- <Column field="activities" header="Iscrizioni" sortable >
           <template #body="slotProps">
             {{ slotProps.data.activities.length }}
           </template>
-        </Column>
-        <Column field="payments" header="Ultimo Pagamento" sortable >
+        </Column> -->
+        <!-- <Column field="payments" header="Ultimo Pagamento" sortable >
           <template #body="slotProps">
             <span v-if="slotProps.data.payments.length > 0">{{ slotProps.data.payments[slotProps.data.payments.length - 1].date }}</span>
             <span v-else> --- </span>
           </template>
-        </Column>
+        </Column> -->
         <Column field="status" header="Status" sortable >
           <template #body="slotProps">
             <ClientsStatusLabel :clientStatus="slotProps.data.status"></ClientsStatusLabel>
@@ -75,8 +75,8 @@
 
 <script setup>
   import { ref, onBeforeMount  } from 'vue';
+  const supabase = useSupabaseClient()
   import { FilterMatchMode } from 'primevue/api';
-  const { getClients } = getClientsApi() // auto-imported
   const { getInitials, getAge } = utility()
 
   const clients = ref();
@@ -88,7 +88,10 @@
   })
 
   const loadClientsList = async () => {
-    clients.value = await getClients();
+    await supabase.from('clients').select('*').then((result)=>{
+      clients.value = result.data
+    })
+    
   }
 
 /* HOOKS */ 

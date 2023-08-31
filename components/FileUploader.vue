@@ -95,9 +95,6 @@ const uploadEvent = (callback) => {
     callback();
 };
 
-const onTemplatedUpload = () => {
-    toast.add({ severity: "info", summary: "Success", detail: "File Uploaded", life: 3000 });
-};
 
 const formatSize = (bytes) => {
     if (bytes === 0) return "0 B";

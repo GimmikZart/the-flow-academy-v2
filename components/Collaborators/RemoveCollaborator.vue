@@ -24,7 +24,6 @@ const props = defineProps(['removingCollaborator'])
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-const { unsubscribeCollaborator , deleteCollaborator } = setCollaboratorsApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 /* DATA */
@@ -33,12 +32,10 @@ const removingCollaboratorDialog = ref(false)
 async function remove(){
   let editingCollaboratorname = `${props.removingCollaborator.name} ${props.removingCollaborator.surname}`
   try {
-    await deleteCollaborator(props.removingCollaborator);
     newSuccessMessage(`${editingCollaboratorname} è stato rimosso dal database (operazione irrevocabile)`);
     removingCollaboratorDialog.value = false
     emit('saved')
   } catch (error) {
-    console.log({error});
     newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DI ${editingCollaboratorname} : ${error}`)
   }
 }
@@ -46,12 +43,10 @@ async function remove(){
 async function unsubscribe(){
   let editingCollaboratorname = `${props.removingCollaborator.name} ${props.removingCollaborator.surname}`
   try {
-    await unsubscribeCollaborator(props.removingCollaborator);
     newSuccessMessage(`${editingCollaboratorname} è stato correttamente disiscritto (i dati rimarranno salvati)`);
     removingCollaboratorDialog.value = false
     emit('saved')
   } catch (error) {
-    console.log({error});
     newErrorMessage(`ERRORE NELLA DISISCRIZIONE A DB DI ${editingCollaboratorname} : ${error}`)
   }
 }

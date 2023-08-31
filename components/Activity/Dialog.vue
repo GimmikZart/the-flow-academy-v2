@@ -53,9 +53,6 @@ import Activity from '@/assets/entities/activity.js';
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
-const { getActivities } = getActivitiesApi() // auto-imported
-const { addActivity, editActivity, deleteActivity } = setActivitiesApi() // auto-imported
-
 
 const activityCategoriesDialog = ref(false)
 const activitiesList = ref([])
@@ -64,7 +61,6 @@ const actionMode = ref(3);
 
 const loadActivityList = async () => {
   try {
-    activitiesList.value = await getActivities();
   } catch (error) {
     console.log(error);
     newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error}`)
@@ -74,7 +70,6 @@ const loadActivityList = async () => {
 
 const saveNewActivity = async () => {
   try {
-    await addActivity(newActivity.value)
     newSuccessMessage(`La categoria '${newActivityCategory.value.name}' è stata aggiunta al database`);
   } catch (error) {
     newErrorMessage(`ERRORE NELL INSERIMENTO A DB DELLA CATEGORIA '${newActivityCategory.value}': ${error}`)
@@ -87,7 +82,6 @@ const saveNewActivity = async () => {
 
 const removeActivityCategory = async (activityCategoryToRemove) => {
   try {
-    await deleteActivityCategory(activityCategoryToRemove);
     newSuccessMessage(`La categoria '${activityCategoryToRemove.name}' è stata rimossa dal database`);
   } catch (error) {
     newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DELLA CATEGORIA '${activityCategoryToRemove.name}': ${error}`)

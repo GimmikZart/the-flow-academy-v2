@@ -92,8 +92,8 @@
 <script setup>
 import { useFiltersStore } from "@/store/pill";
 import Client from '@/assets/entities/client.js';
+const supabase = useSupabaseClient()
 const emit = defineEmits(['saved'])
-const { addClient } = setClientsApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
@@ -101,15 +101,14 @@ const newClient = reactive(new Client());
 const addClientDialog = ref(false)
 
 async function saveNewClient(){
+  console.log(newClient);
   let newClientname = `${newClient.name} ${newClient.surname}`
   try {
-    await addClient(newClient);
+    const { data } = await supabase.from("clients").insert(newClient);
     newSuccessMessage(`${newClientname} è stato aggiunto al database`);
     newClient.reset();
     addClientDialog.value = false
     emit('saved')
-    
-    
   } catch (error) {
     newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${newClientname} : ${error}`)
   }

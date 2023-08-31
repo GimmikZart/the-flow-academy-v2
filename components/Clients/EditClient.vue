@@ -99,7 +99,6 @@ const props = defineProps(['editingClient'])
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-const { editClient } = setClientsApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 const { formatDate, deepCopy, convertUndefinedToNull} = utility()
@@ -110,13 +109,11 @@ const copyOfClient = reactive({value: new Client()})
 async function saveEditingClient(){
   let editingClientname = `${copyOfClient.value.name} ${copyOfClient.value.surname}`
   try {
-    let cleanedClientFromUndefined = convertUndefinedToNull(copyOfClient.value)
-    await editClient(cleanedClientFromUndefined);
+    
     newSuccessMessage(`${editingClientname} è stato modificato nel database`);
     editingClientDialog.value = false
     emit('saved')
   } catch (error) {
-    console.log({error});
     newErrorMessage(`ERRORE NELLA MODIFICA A DB DI ${editingClientname} : ${error}`)
   }
 }
@@ -127,8 +124,6 @@ watch(() => props.editingClient, () => {
 });
 
 const setClientToEdit = () => {
-  console.log('CAAAAAMBIOOOOOO');
-  console.log(props.editingClient);
   copyOfClient.value = deepCopy(props.editingClient)
   if (copyOfClient.value.dateOfBirth != null) {
     copyOfClient.value.dateOfBirth = new Date(copyOfClient.value.dateOfBirth.seconds * 1000)
@@ -140,13 +135,12 @@ const setClientToEdit = () => {
   } else {
     copyOfClient.value.firstContact = undefined
   }
-  
 }
 
 /* HOOKS */ 
 onBeforeMount(async () => {
   setClientToEdit()
-  })
+})
 </script>
 
 <style lang="scss" scoped>

@@ -72,7 +72,6 @@
 <script setup>
   import { ref, onBeforeMount  } from 'vue';
   import { FilterMatchMode } from 'primevue/api';
-  const { getCollaborators } = getCollaboratorsApi() // auto-imported
   const { getInitials, getAge } = utility()
 
   const collaborators = ref();
@@ -84,7 +83,7 @@
   })
 
   const loadCollaboratorsList = async () => {
-    collaborators.value = await getCollaborators();
+    
   }
 
 /* HOOKS */ 

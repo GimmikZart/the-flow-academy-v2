@@ -127,7 +127,6 @@
 import { useFiltersStore } from "@/store/pill";
 import Collaborator from '@/assets/entities/collaborator.js';
 const emit = defineEmits(['saved'])
-const { addCollaborator } = setCollaboratorsApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
@@ -138,7 +137,6 @@ const roleOptions = ref([])
 async function saveNewCollaborator(){
   let newCollaboratorname = `${newCollaborator.name} ${newCollaborator.surname}`
   try {
-    await addCollaborator(newCollaborator);
     newSuccessMessage(`${newCollaboratorname} è stato aggiunto al database`);
     newCollaborator.reset();
     addCollaboratorDialog.value = false

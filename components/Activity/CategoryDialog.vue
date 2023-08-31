@@ -42,8 +42,6 @@ import { ref, onBeforeMount  } from 'vue';
 import ActivityCategory from '@/assets/entities/activityCategory.js';
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
-const { getActivityCategoryList } = getActivityCategoryApi() // auto-imported
-const { addActivityCategory, editActivityCategory, deleteActivityCategory} = setActivityCategoryApi() // auto-imported
 
 
 const activityCategoriesDialog = ref(false)
@@ -52,7 +50,6 @@ const newActivityCategory = ref(new ActivityCategory())
 
 const loadActivityCategoryList = async () => {
   try {
-    activityCategoriesList.value = await getActivityCategoryList();
     console.log(activityCategoriesList.value);
   } catch (error) {
     console.log(error);
@@ -63,7 +60,6 @@ const loadActivityCategoryList = async () => {
 
 const saveNewActivityCategory = async () => {
   try {
-    await addActivityCategory(newActivityCategory.value)
     newSuccessMessage(`La categoria '${newActivityCategory.value.name}' è stata aggiunta al database`);
   } catch (error) {
     newErrorMessage(`ERRORE NELL INSERIMENTO A DB DELLA CATEGORIA '${newActivityCategory.value}': ${error}`)
@@ -76,7 +72,6 @@ const saveNewActivityCategory = async () => {
 
 const removeActivityCategory = async (activityCategoryToRemove) => {
   try {
-    await deleteActivityCategory(activityCategoryToRemove);
     newSuccessMessage(`La categoria '${activityCategoryToRemove.name}' è stata rimossa dal database`);
   } catch (error) {
     newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DELLA CATEGORIA '${activityCategoryToRemove.name}': ${error}`)

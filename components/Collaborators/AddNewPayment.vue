@@ -42,7 +42,6 @@ const props = defineProps(['editingCollaborator'])
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-const { addPayment } = setCollaboratorsApi() // auto-imported
 /* RESPONSE */
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
@@ -54,7 +53,6 @@ const addPaymentDialog = ref(false)
 async function saveNewPayment(){
   let collaboratorName = `${props.editingCollaborator.name} ${props.editingCollaborator.surname}`
   try {
-    await addPayment(newPayment);
     newSuccessMessage(`Il pagamento di ${collaboratorName} è stato registrato`);
     newPayment.reset();
     addPaymentDialog.value = false

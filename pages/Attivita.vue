@@ -34,18 +34,13 @@
 
 <script setup>
 import { ref, onBeforeMount  } from 'vue';
-const { getActivityInstanceList } = getActivityInstanceApi() // auto-imported
 
 const activityInstanceList = ref([]);
 
-const loadActivityInstanceList = async () => {
-  activityInstanceList.value = await getActivityInstanceList();
-  console.log(activityInstanceList.value);
-}
 
 /* HOOKS */ 
 onBeforeMount(async () => {
-  loadActivityInstanceList()
+
 }) 
 
 </script>

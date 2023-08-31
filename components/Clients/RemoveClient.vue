@@ -24,7 +24,6 @@ const props = defineProps(['removingClient'])
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-const { unsubscribeClient , deleteClient } = setClientsApi() // auto-imported
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 /* DATA */
@@ -33,12 +32,10 @@ const removingClientDialog = ref(false)
 async function remove(){
   let editingClientname = `${props.removingClient.name} ${props.removingClient.surname}`
   try {
-    await deleteClient(props.removingClient);
     newSuccessMessage(`${editingClientname} è stato rimosso dal database (operazione irrevocabile)`);
     removingClientDialog.value = false
     emit('saved')
   } catch (error) {
-    console.log({error});
     newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DI ${editingClientname} : ${error}`)
   }
 }
@@ -46,12 +43,10 @@ async function remove(){
 async function unsubscribe(){
   let editingClientname = `${props.removingClient.name} ${props.removingClient.surname}`
   try {
-    await unsubscribeClient(props.removingClient);
     newSuccessMessage(`${editingClientname} è stato correttamente disiscritto (i dati rimarranno salvati)`);
     removingClientDialog.value = false
     emit('saved')
   } catch (error) {
-    console.log({error});
     newErrorMessage(`ERRORE NELLA DISISCRIZIONE A DB DI ${editingClientname} : ${error}`)
   }
 }
