@@ -17,7 +17,15 @@
           <label>Nome</label>
         </span>
         <span class="p-float-label col-start-3 col-end-5">
-          <MultiSelect v-model="newActivity.collaborators" :options="collaboratorsList" optionLabel="name" placeholder="Seleziona collaboratori" class="w-full"/>
+          <MultiSelect v-model="newActivity.collaborators" :options="collaboratorsList" optionLabel="name" optionValue="id" placeholder="Seleziona collaboratori" class="w-full">
+            <template #option="slotProps">
+              <div class="flex items-center">
+                <Avatar v-if="slotProps.option.avatar" :image="slotProps.option.avatar" class="mr-2" size="small" shape="circle" />
+                <Avatar v-else :label="getInitials(slotProps.option.name, slotProps.option.surname)" class="mr-2" size="small" shape="circle" />
+                <div>{{ slotProps.option.name }} {{ slotProps.option.surname }}</div>
+              </div>
+            </template>
+          </MultiSelect>
           <label>Seleziona collaboratori</label>
         </span>
 
@@ -52,30 +60,89 @@
       </template>
     </Dialog>
   </div>
-  
 </template>
 
 <script setup>
+/* IMPORTS */
 import Activity from '@/assets/entities/activity.js';
 import { useFiltersStore } from "@/store/pill"; const filtersStore = useFiltersStore(); const { newSuccessMessage, newErrorMessage } = filtersStore
+/* SUPABASE */
+const supabase = useSupabaseClient()
+/* COMPOSABLES */
+const { getInitials } = utility()
 
+/* EMTIS */
 const emit = defineEmits(['saved'])
 
+/* DATA */
 const newActivity = reactive(new Activity());
+const categoriesList = ref();
+const collaboratorsList = ref();
 const addActivityDialog = ref(false)
 const fileInput = ref(null)
 
+/* WATCH */
+watch(addActivityDialog, async () => {
+  await getCategories()
+  await getCollaborators()
+})
+
+/* METHODS */
 async function saveNewActivity(){
-  let newActivityname = `${newActivity.name} ${newActivity.surname}`
-  try {
+  let activityItem = {
+    name: newActivity.name,
+    category_id: newActivity.category.id,
+    color: newActivity.color,
+    description: newActivity.description,
+    image: newActivity.image,
+    intern: newActivity.intern
+  }
+
   
-    //newSuccessMessage(`${newActivityname} è stato aggiunto al database`);
+  try {
+    let { data, error } = await supabase.from("activities").insert(activityItem).select('id').single();
+    if(error) throw error
+    newActivity.collaborators.map(async (collaborator) => {
+      let { error } = await supabase.from("activity_collaborator").insert({
+        activity_id: data.id,
+        collaborator_id: collaborator
+      })
+      if(error) {
+        let { errorNested } = await supabase
+                        .from('activities')
+                        .delete()
+                        .eq('id', data.id);
+        if(errorNested) throw errorNested
+        throw error
+      } 
+    });
+    newSuccessMessage(`${newActivity.name} è stata aggiunta al database`);
     newActivity.reset();
     addActivityDialog.value = false
     emit('saved')
-  
   } catch (error) {
-    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${newActivityname} : ${error}`)
+    console.log(error.message);
+    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${newActivity.name} : ${error}`)
+  }
+}
+
+async function getCategories(){
+  try {
+    let { data, error} = await supabase.from('categories').select('*')
+    if(error) throw error;
+    categoriesList.value = data;
+  } catch (error) {
+    newErrorMessage(`ERRORE NELLO SCARICAMENTO DELLE CATEGORIE`)
+  }
+}
+
+async function getCollaborators(){
+  try {
+    let { data, error} = await supabase.from('collaborators').select('id, name, surname, avatar')
+    if(error) throw error;
+    collaboratorsList.value = data;
+  } catch (error) {
+    newErrorMessage(`ERRORE NELLO SCARICAMENTO DEI COLLABORATORI`)
   }
 }
 </script>

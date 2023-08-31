@@ -38,17 +38,17 @@
           </template>
           
         </Column>
-        <Column field="activities" header="Attività" sortable >
+        <!-- <Column field="activities" header="Attività" sortable >
           <template #body="slotProps">
             {{ slotProps.data.activities.length }}
           </template>
-        </Column>
-        <Column field="payments" header="Ultimo Pagamento" sortable >
+        </Column> -->
+        <!-- <Column field="payments" header="Ultimo Pagamento" sortable >
           <template #body="slotProps">
             <span v-if="slotProps.data.payments.length > 0">{{ slotProps.data.payments[slotProps.data.payments.length - 1].date }}</span>
             <span v-else> --- </span>
           </template>
-        </Column>
+        </Column> -->
         <Column field="status" header="Status" sortable >
           <template #body="slotProps">
             <CollaboratorsStatusLabel :collaboratorStatus="slotProps.data.status"></CollaboratorsStatusLabel>
@@ -59,7 +59,7 @@
             <Button v-if="actionMode == 4" text>
               <Icon name="carbon:user-profile" size="2rem" color="brown"></Icon>
             </Button>
-            <CollaboratorsEditCollaborator v-else-if="actionMode == 1" :editingCollaborator="slotProps.data" @saved="loadCollaboratorsList()"></CollaboratorsEditCollaborator>
+            <CollaboratorsEditCollaborator v-else-if="actionMode == 1" :collaboratorId="slotProps.data.id" @saved="loadCollaboratorsList()"></CollaboratorsEditCollaborator>
             <CollaboratorsRemoveCollaborator v-else-if="actionMode == 2" :removingCollaborator="slotProps.data" @saved="loadCollaboratorsList()"></CollaboratorsRemoveCollaborator>
             <CollaboratorsAddNewPayment v-else-if="actionMode == 3 && slotProps.data.status != 2" :editingCollaborator="slotProps.data" @saved="loadCollaboratorsList()"></CollaboratorsAddNewPayment>
           </template>
@@ -72,6 +72,7 @@
 <script setup>
   import { ref, onBeforeMount  } from 'vue';
   import { FilterMatchMode } from 'primevue/api';
+  const supabase = useSupabaseClient()
   const { getInitials, getAge } = utility()
 
   const collaborators = ref();
@@ -83,7 +84,13 @@
   })
 
   const loadCollaboratorsList = async () => {
-    
+    try {
+      let { data, error} = await supabase.from('collaborators').select('*')
+      if(error) throw error
+      collaborators.value = data
+    } catch (error) {
+      newErrorMessage(`ERRORE NELL'AQUISIZIONE DEI COLLABORATORI DAL DB: ${error.message}`)
+    }
   }
 
 /* HOOKS */ 

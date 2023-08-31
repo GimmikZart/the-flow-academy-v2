@@ -19,6 +19,8 @@
 <script setup>
 import { useFiltersStore } from "@/store/pill";
 import { defineProps } from 'vue'
+/* SUPABASE */
+const supabase = useSupabaseClient()
 /* PROPS */
 const props = defineProps(['removingCollaborator'])
 /* EMITS */
@@ -32,22 +34,32 @@ const removingCollaboratorDialog = ref(false)
 async function remove(){
   let editingCollaboratorname = `${props.removingCollaborator.name} ${props.removingCollaborator.surname}`
   try {
+    let { error } = await supabase
+                        .from('collaborators')
+                        .delete()
+                        .eq('id', props.removingCollaborator.id);
+    if(error) throw error
     newSuccessMessage(`${editingCollaboratorname} è stato rimosso dal database (operazione irrevocabile)`);
     removingCollaboratorDialog.value = false
     emit('saved')
   } catch (error) {
-    newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DI ${editingCollaboratorname} : ${error}`)
+    newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DI ${editingCollaboratorname} : ${error.message}`)
   }
 }
 
 async function unsubscribe(){
   let editingCollaboratorname = `${props.removingCollaborator.name} ${props.removingCollaborator.surname}`
   try {
+    let { error } = await supabase
+                          .from('collaborators')
+                          .update({ status: 2 })
+                          .eq('id', props.removingCollaborator.id);
+    if(error) throw error
     newSuccessMessage(`${editingCollaboratorname} è stato correttamente disiscritto (i dati rimarranno salvati)`);
     removingCollaboratorDialog.value = false
     emit('saved')
   } catch (error) {
-    newErrorMessage(`ERRORE NELLA DISISCRIZIONE A DB DI ${editingCollaboratorname} : ${error}`)
+    newErrorMessage(`ERRORE NELLA DISISCRIZIONE A DB DI ${editingCollaboratorname} : ${error.message}`)
   }
 }
 

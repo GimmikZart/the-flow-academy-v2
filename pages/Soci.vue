@@ -22,7 +22,7 @@
       <DataTable :filters="clientFilter" filterDisplay="row" :globalFilterFields="['name', 'surname']" resizableColumns columnResizeMode="fit" :value="clients" tableStyle="min-width: 50rem" removableSort  stripedRows class="p-datatable-sm" sortMode="multiple">
         <Column field="avatar" header="Avatar">
           <template #body="slotProps">
-            <Avatar v-if="slotProps.data.avatar != ''" :image="slotProps.data.avatar" class="mr-2" size="large" shape="circle" />
+            <Avatar v-if="slotProps.data.avatar" :image="slotProps.data.avatar" class="mr-2" size="large" shape="circle" />
             <Avatar v-else :label="getInitials(slotProps.data.name, slotProps.data.surname)" class="mr-2" size="large" shape="circle" />
           </template>
         </Column>
@@ -61,8 +61,9 @@
             <Button v-if="actionMode == 4" text>
               <Icon name="carbon:user-profile" size="2rem" color="brown"></Icon>
             </Button>
-            <ClientsEditClient v-else-if="actionMode == 1" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsEditClient>
-            <ClientsRemoveClient v-else-if="actionMode == 2" :removingClient="slotProps.data" @saved="loadClientsList()"></ClientsRemoveClient>
+            
+            <ClientsEditClient v-else-if="actionMode == 1" :clientId="slotProps.data.id" @saved="loadClientsList()"></ClientsEditClient>
+            <ClientsRemoveClient v-else-if="actionMode == 2" :clientToRemove="slotProps.data" @saved="loadClientsList()"></ClientsRemoveClient>
             <ClientsAddNewPayment v-else-if="actionMode == 3 && slotProps.data.status != 2" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsAddNewPayment>
             
             
@@ -74,10 +75,14 @@
 </template>
 
 <script setup>
+import { useFiltersStore } from "@/store/pill";
   import { ref, onBeforeMount  } from 'vue';
   const supabase = useSupabaseClient()
   import { FilterMatchMode } from 'primevue/api';
   const { getInitials, getAge } = utility()
+  /* COMPOSABLES */
+  const filtersStore = useFiltersStore()
+  const { newErrorMessage } = filtersStore
 
   const clients = ref();
   const actionMode = ref(4);
@@ -88,9 +93,13 @@
   })
 
   const loadClientsList = async () => {
-    await supabase.from('clients').select('*').then((result)=>{
-      clients.value = result.data
-    })
+    try {
+      let { data, error} = await supabase.from('clients').select('*')
+      if(error) throw error
+      clients.value = data
+    } catch (error) {
+      newErrorMessage(`ERRORE NELL'AQUISIZIONE DI SOCI DAL DB: ${error.message}`)
+    }
     
   }
 

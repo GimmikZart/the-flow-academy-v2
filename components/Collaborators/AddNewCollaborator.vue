@@ -12,10 +12,6 @@
           <InputText v-model="newCollaborator.avatar" disabled placeholder="Link Foto" class="w-full"></InputText>
           <label>Link Foto</label>
         </span>
-
-        
-        <MultiSelect v-model="newCollaborator.roles" :options="roleOptions" optionLabel="Ruoli" placeholder="Seleziona ruoli" class="col-start-3 col-end-5"></MultiSelect>
-
   
         <span class="p-float-label p-input-icon-left col-span-2">
           <Icon name="clarity:avatar-line" size="20px"></Icon>
@@ -126,6 +122,7 @@
 <script setup>
 import { useFiltersStore } from "@/store/pill";
 import Collaborator from '@/assets/entities/collaborator.js';
+const supabase = useSupabaseClient()
 const emit = defineEmits(['saved'])
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
@@ -136,15 +133,17 @@ const roleOptions = ref([])
 
 async function saveNewCollaborator(){
   let newCollaboratorname = `${newCollaborator.name} ${newCollaborator.surname}`
+  console.log(newCollaborator);
   try {
+    let { error } = await supabase.from("collaborators").insert(newCollaborator)
+    if(error) throw error
     newSuccessMessage(`${newCollaboratorname} è stato aggiunto al database`);
     newCollaborator.reset();
     addCollaboratorDialog.value = false
     emit('saved')
-    
-    
   } catch (error) {
-    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${newCollaboratorname} : ${error}`)
+    console.log(error.message);
+    newErrorMessage(`${error.message}`)
   }
 }
 </script>

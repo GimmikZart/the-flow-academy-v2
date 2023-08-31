@@ -25,8 +25,7 @@ export default function() {
 
   const getAge = (dateOfBirth) => {
     if(dateOfBirth){
-      console.log({dateOfBirth});
-      const ageInSeconds = Math.floor((new Date() / 1000) - dateOfBirth.seconds);
+      const ageInSeconds = Math.floor((new Date() / 1000) - new Date(dateOfBirth) / 1000);
       return Math.floor(ageInSeconds / 31557600);
     } else {
       return "---"

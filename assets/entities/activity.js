@@ -1,6 +1,6 @@
 export default class Activity {
   constructor( name = '',
-                category = '',
+                category_id = null,
                 collaborators = [],
                 color = '',
                 description = '',
@@ -9,7 +9,7 @@ export default class Activity {
                 intern = true
                 ) {
     this.name = name
-    this.category = category,
+    this.category_id = category_id,
     this.collaborators = collaborators,
     this.color = color,
     this.description = description,
@@ -22,7 +22,7 @@ export default class Activity {
   toPlainObject() {
     return {
       name: this.name,
-      category: this.category,
+      category_id: this.category_id,
       collaborators: this.collaborators,
       color: this.color,
       description: this.description,
@@ -35,7 +35,7 @@ export default class Activity {
   // Metodo per resettare un oggetto Payment 
   reset() {
     this.name = '',
-    this.category = '',
+    this.category_id = null,
     this.collaborators = [],
     this.color = '',
     this.description = '',

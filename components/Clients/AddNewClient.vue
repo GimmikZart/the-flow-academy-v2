@@ -104,13 +104,14 @@ async function saveNewClient(){
   console.log(newClient);
   let newClientname = `${newClient.name} ${newClient.surname}`
   try {
-    const { data } = await supabase.from("clients").insert(newClient);
+    let { error } = await supabase.from("clients").insert(newClient);
+    if(error) throw error
     newSuccessMessage(`${newClientname} è stato aggiunto al database`);
     newClient.reset();
     addClientDialog.value = false
     emit('saved')
   } catch (error) {
-    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${newClientname} : ${error}`)
+    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${newClientname} : ${error.message}`)
   }
 }
 </script>

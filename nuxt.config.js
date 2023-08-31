@@ -14,9 +14,6 @@ export default defineNuxtConfig({
     }
   },
   modules: ['nuxt-icon', '@pinia/nuxt','@nuxtjs/supabase'],
-  cloudinary: {
-    cloudName: 'dbquiu1jo',
-  },
   css: [
     "primevue/resources/themes/lara-light-blue/theme.css",
     '~/assets/css/main.css',

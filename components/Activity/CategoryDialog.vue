@@ -4,7 +4,7 @@
       <Icon name="carbon:ibm-secure-infrastructure-on-vpc-for-regulated-industries" size="1rem" color="white"></Icon>
       <span class="ml-3">Categorie</span>
     </Button>
-    <Dialog :visible="activityCategoriesDialog" modal :style="{ width: '30vw', maxHeight: '60vh', minHeight: '500px' }" :showHeader="false">
+    <Dialog :visible="activityCategoriesDialog" modal :style="{ width: '30vw', maxHeight: '60vh' }" :showHeader="false">
       <div class="p-6 flex justify-between h-fit">
         <h2 class="text-xl font-bold">Categorie attività</h2>
       </div>
@@ -40,29 +40,37 @@
 import { useFiltersStore } from "@/store/pill";
 import { ref, onBeforeMount  } from 'vue';
 import ActivityCategory from '@/assets/entities/activityCategory.js';
+/* SUPABASE */
+const supabase = useSupabaseClient()
+/* RESPONSE */
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
-
+/* DATA */
 const activityCategoriesDialog = ref(false)
 const activityCategoriesList = ref([])
 const newActivityCategory = ref(new ActivityCategory())
 
+/* METHODS */
 const loadActivityCategoryList = async () => {
   try {
-    console.log(activityCategoriesList.value);
+    let { data, error} = await supabase.from('categories').select('*')
+    activityCategoriesList.value = data;
+    if(error) throw error
   } catch (error) {
     console.log(error);
-    newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error}`)
+    newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error.message}`)
   }
   
 }
 
 const saveNewActivityCategory = async () => {
   try {
+    let { error } = await supabase.from("categories").insert(newActivityCategory.value);
+    if(error) throw error
     newSuccessMessage(`La categoria '${newActivityCategory.value.name}' è stata aggiunta al database`);
   } catch (error) {
-    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DELLA CATEGORIA '${newActivityCategory.value}': ${error}`)
+    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DELLA CATEGORIA '${newActivityCategory.value}': ${error.message}`)
   } finally {
     await loadActivityCategoryList()
     newActivityCategory.value.reset()

@@ -9,27 +9,30 @@
         <h2 class="text-xl font-bold">Lista Attività</h2>
         <div class="flex items-center">
           <TopBarActionModes entity="activity" @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
-          <ActivityAddNewActivity class="h-full"></ActivityAddNewActivity>
+          <ActivityAddNewActivity class="h-full" @saved="loadActivityList()"></ActivityAddNewActivity>
         </div>
       </div>
       <div class="p-6">
         <DataTable :value="activitiesList">
           <Column field="image" header="Immagine"></Column>
           <Column field="name" header="Nome"></Column>
-          <Column field="category" header="Categoria"></Column>
-          <Column field="collaborators" header="Collaboratori disponibili"></Column>
+          <Column field="category.name" header="Categoria"></Column>
+          <Column field="collaborators.length" header="Collaboratori disponibili"></Column>
           <Column field="instances" header="Attivo in"></Column>
           <Column field="color" header="Colore"></Column>
           <Column field="intern" header="Interno"></Column>
           <Column field="action" header="Azione">
             <template #body="slotProps">
-              <Button size="1rem" v-if="actionMode == 1" rounded text @click="editActivity(slotProps.data)">
+              <!-- <Button size="1rem" v-if="actionMode == 1" rounded text @click="editActivity(slotProps.data)">
                 <Icon name="material-symbols:edit" size="2rem" color="orange" />
-              </Button>
+              </Button> -->
+              <ActivityEditActivity v-if="actionMode == 1" :activityId="slotProps.data.id" @saved="loadActivityList()"></ActivityEditActivity>
+
+
               <Button size="1rem" v-if="actionMode == 2" rounded text @click="removeActivityCategory(slotProps.data)">
                 <Icon name="material-symbols:delete" size="2rem" color="red" />
               </Button>
-              <Button size="1rem" v-if="actionMode == 4" rounded text @click="removeActivityCategory(slotProps.data)">
+              <Button size="1rem" v-if="actionMode == 4" rounded text>
                 <Icon name="mdi:eye" size="2rem" color="brown" />
               </Button>
             </template>
@@ -46,26 +49,57 @@
 </template>
 
 <script setup>
+/* SUPABASE */
+const supabase = useSupabaseClient()
+/* IMPORTS */
 import { useFiltersStore } from "@/store/pill";
 import { ref, onBeforeMount  } from 'vue';
 import Activity from '@/assets/entities/activity.js';
-
+/* RESPONSE */
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
-
+/* DATA */
 const activityCategoriesDialog = ref(false)
 const activitiesList = ref([])
 const newActivity = ref(new Activity())
 const actionMode = ref(3);
 
+/* METHODS */
 const loadActivityList = async () => {
+  console.log('RELOOOOOOOAAAAAADDD');
   try {
+    let { data, error} = await supabase.from('activities').select('*')
+    if(error) throw error
+ 
+    data.map(async (activity) => {
+      /* CATEGORY */
+      let { data , error} = await supabase.from('categories').select('id, name').eq('id', activity.category_id).single()
+      if(error) throw error
+      activity.category = data
+    });
+    
+    data.map(async (activity) => {
+      /* COLLABORATORI */
+      activity.collaborators = []
+      let { data , error} = await supabase.from('activity_collaborator').select('collaborators(*)').eq('activity_id', activity.id)
+      if(error) throw error
+      data.forEach(collaborator => {
+        activity.collaborators.push(collaborator.collaborators.id)
+      });
+    });
+    data.map(async (activity) => {
+      /* ISTANZE */
+      let { data, error } = await supabase.from('instance_activities').select('instances(*)').eq('activity_id', activity.id)
+      if(error) throw error
+      activity.instances = data.length
+    });
+    
+    activitiesList.value = data
   } catch (error) {
     console.log(error);
-    newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error}`)
+    newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error.message}`)
   }
-  
 }
 
 const saveNewActivity = async () => {
