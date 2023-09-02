@@ -9,7 +9,7 @@
 
         <!-- <FileUploader  class="col-start-1 col-end-5"/> -->
 
-        <FileUpload ref="fileInput" mode="basic" name="demo[]" url="./upload.php" accept="image/*" :maxFileSize="1000000" customUpload @uploader="firestoreUpload" />
+        <FileUpload ref="fileInput" mode="basic" name="demo[]" url="./upload.php" accept="image/*" :maxFileSize="1000000" customUpload />
 
         <span class="p-float-label p-input-icon-left col-start-1 col-end-3">
           <Icon name="clarity:avatar-line" size="20px"></Icon>
@@ -30,7 +30,7 @@
         </span>
 
         <span class="p-float-label col-start-1 col-end-2">
-          <Dropdown v-model="editingActivity.value.category" :options="categoriesList" optionLabel="name" placeholder="Categoria" class="w-full" />
+          <Dropdown v-model="editingActivity.value.category_id" :options="categoriesList" optionLabel="name" optionValue="id"  placeholder="Categoria" class="w-full" />
           <label for="birth_date">Categoria</label>
         </span>
         <div class="flex items-center col-start-2 col-end-3">
@@ -93,26 +93,27 @@ async function saveEditingActivity(){
   console.log({editingActivity});
   try {
     let activityItem = {
-      name: editingActivity.name,
-      category_id: editingActivity.category_id,
-      color: editingActivity.color,
-      description: editingActivity.description,
-      image: editingActivity.image,
-      intern: editingActivity.intern
+      name: editingActivity.value.name,
+      category_id: editingActivity.value.category_id,
+      color: editingActivity.value.color,
+      description: editingActivity.value.description,
+      image: editingActivity.value.image,
+      intern: editingActivity.value.intern
     }
+    console.log({activityItem});
     let { error } =  await supabase.from('activities').update(activityItem).eq('id', props.activityId)
     if(error) throw error
     /* RIMUOVO TUTTE LE RIGHE IN ACTIVITY_COLLABORATOR DOVE L'ACTIVITY_ID == A QUESTA ACTIVITY */
-    {
+    /* {
       console.log('TROIA', editingActivity.value.id);
       let { error } = await supabase
                           .from('activity_collaborator')
                           .delete()
                           .eq('activity_id', editingActivity.value.id);
       if(error) throw error
-    }
+    } */
     /* REINSERISCO TUTTI GLI INSEGNANTI LEGATI A QUESTA ATTIVITA' */
-    editingActivity.value.collaborators.map(async (collaborator) => {
+    /* editingActivity.value.collaborators.map(async (collaborator) => {
       let { error } = await supabase.from("activity_collaborator").insert({
         activity_id: editingActivity.value.id,
         collaborator_id: collaborator
@@ -126,7 +127,7 @@ async function saveEditingActivity(){
         if(error) throw error
         throw error
       } 
-    });
+    }); */
     newSuccessMessage(`L'attività ${editingActivity.value.name} è stata modificata nel database`);
     editingActivityDialog.value = false
     emit('saved') 

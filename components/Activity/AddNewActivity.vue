@@ -9,7 +9,7 @@
 
         <!-- <FileUploader  class="col-start-1 col-end-5"/> -->
 
-        <FileUpload ref="fileInput" mode="basic" name="demo[]" url="./upload.php" accept="image/*" :maxFileSize="1000000" customUpload @uploader="firestoreUpload" />
+        <FileUpload ref="fileInput" mode="basic" name="demo[]" url="./upload.php" accept="image/*" :maxFileSize="1000000" customUpload  />
 
         <span class="p-float-label p-input-icon-left col-start-1 col-end-3">
           <Icon name="clarity:avatar-line" size="20px"></Icon>
