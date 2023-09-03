@@ -92,47 +92,37 @@ watch(editingActivityDialog, async () => {
 async function saveEditingActivity(){
   console.log({editingActivity});
   try {
+
+    /* UPDATE ACTIVITY INFOS */
     let activityItem = {
       name: editingActivity.value.name,
       category_id: editingActivity.value.category_id,
       color: editingActivity.value.color,
       description: editingActivity.value.description,
       image: editingActivity.value.image,
-      intern: editingActivity.value.intern
+      intern: editingActivity.value.intern,
+      status: editingActivity.value.collaborators.length > 0 ? true : false
     }
-    console.log({activityItem});
-    let { error } =  await supabase.from('activities').update(activityItem).eq('id', props.activityId)
-    if(error) throw error
-    /* RIMUOVO TUTTE LE RIGHE IN ACTIVITY_COLLABORATOR DOVE L'ACTIVITY_ID == A QUESTA ACTIVITY */
-    /* {
-      console.log('TROIA', editingActivity.value.id);
-      let { error } = await supabase
-                          .from('activity_collaborator')
-                          .delete()
-                          .eq('activity_id', editingActivity.value.id);
+  
+    await supabase.from('activities').update(activityItem).eq('id', props.activityId).then((data, error) => {
       if(error) throw error
-    } */
-    /* REINSERISCO TUTTI GLI INSEGNANTI LEGATI A QUESTA ATTIVITA' */
-    /* editingActivity.value.collaborators.map(async (collaborator) => {
-      let { error } = await supabase.from("activity_collaborator").insert({
-        activity_id: editingActivity.value.id,
-        collaborator_id: collaborator
-      })
-      if(error) {
-        newErrorMessage(`ERRORE, CANCELLO ATTIVITA' PER EVITARE DANNI MAGGIORI`)
-        let { error } = await supabase
-                        .from('activities')
-                        .delete()
-                        .eq('id', editingActivity.value.id);
-        if(error) throw error
-        throw error
-      } 
-    }); */
+    }) 
+
+    /* UPDATE COLLABORATORS RELATION */
+    let p_activity_id = props.activityId
+    let p_collaborator_ids = editingActivity.value.collaborators
+    await supabase.rpc('update_activity_collaborators', {
+                                          p_activity_id, 
+                                          p_collaborator_ids
+                                        }).then((data, error) => {
+                                          if(error) throw error;
+                                        })
+    
+
     newSuccessMessage(`L'attività ${editingActivity.value.name} è stata modificata nel database`);
     editingActivityDialog.value = false
     emit('saved') 
   } catch (error) {
-    console.log({error});
     newErrorMessage(`ERRORE NELLA MODIFICA A DB DI ${editingActivity.value.name} : ${error.message}`)
   }
 }

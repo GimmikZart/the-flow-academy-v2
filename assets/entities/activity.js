@@ -1,3 +1,4 @@
+
 export default class Activity {
   constructor( name = '',
                 category_id = null,
@@ -6,7 +7,8 @@ export default class Activity {
                 description = '',
                 image = '',
                 instances = [],
-                intern = true
+                intern = true,
+                status = true
                 ) {
     this.name = name
     this.category_id = category_id,
@@ -16,6 +18,7 @@ export default class Activity {
     this.image = image,
     this.instances = instances,
     this.intern = intern
+    this.status = status
   }
 
   // Metodo per convertire un oggetto Client in un oggetto JavaScript standard
@@ -28,7 +31,8 @@ export default class Activity {
       description: this.description,
       image: this.image,
       instances: this.instances,
-      intern: this.intern
+      intern: this.intern,
+      status: this.status
     };
   }
 
@@ -42,5 +46,6 @@ export default class Activity {
     this.image = '',
     this.instances = [],
     this.intern = true
+    this.status = true
   }
 }

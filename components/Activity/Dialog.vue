@@ -8,7 +8,6 @@
       <div class="p-6 flex justify-between h-fit">
         <h2 class="text-xl font-bold">Lista Attività</h2>
         <div class="flex items-center">
-          <Button @click="loadActivityList"></Button>
           <TopBarActionModes entity="activity" @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
           <ActivityAddNewActivity class="h-full" @saved="loadActivityList()"></ActivityAddNewActivity>
         </div>
@@ -16,23 +15,31 @@
       <div class="p-6">
         <DataTable :key="test" :value="activitiesList">
           <Column field="image" header="Immagine"></Column>
-          <Column field="name" header="Nome"></Column>
+          <Column field="name" header="Nome" class="font-bold"></Column>
           <Column field="category" header="Categoria"></Column>
           <Column field="collaborators" header="Collaboratori disponibili"></Column>
           <Column field="instances" header="Attivo in"></Column>
-          <Column field="color" header="Colore"></Column>
-          <Column field="intern" header="Interno"></Column>
+          <Column field="color" header="Colore">
+            <template #body="slotProps">
+              <ColorPicker v-model="slotProps.data.color" disabled></ColorPicker>
+            </template>
+          </Column>
+          <Column field="intern" header="Visibile">
+            <template #body="slotProps">
+              <Icon v-if="slotProps.data.intern" name="humbleicons:eye-close" size="2rem"></Icon>
+              <Icon v-else name="radix-icons:eye-open" size="2rem"></Icon>
+            </template>
+          </Column>
+          <Column field="status" header="Status">
+            <template #body="slotProps">
+              <Icon v-if="slotProps.data.status" name="pajamas:status-active" size="1rem" color="green"></Icon>
+              <Icon v-else name="pajamas:status-active" size="1rem" color="red"></Icon>
+            </template>
+          </Column>
           <Column field="action" header="Azione">
             <template #body="slotProps">
-              <!-- <Button size="1rem" v-if="actionMode == 1" rounded text @click="editActivity(slotProps.data)">
-                <Icon name="material-symbols:edit" size="2rem" color="orange" />
-              </Button> -->
               <ActivityEditActivity v-if="actionMode == 1" :activityId="slotProps.data.id" @saved="loadActivityList()"></ActivityEditActivity>
-
-
-              <Button size="1rem" v-if="actionMode == 2" rounded text @click="removeActivityCategory(slotProps.data)">
-                <Icon name="material-symbols:delete" size="2rem" color="red" />
-              </Button>
+              <ActivityRemoveActivity v-if="actionMode == 2" :activityToRemove="slotProps.data" @saved="loadActivityList()"></ActivityRemoveActivity>
               <Button size="1rem" v-if="actionMode == 4" rounded text>
                 <Icon name="mdi:eye" size="2rem" color="brown" />
               </Button>
@@ -60,6 +67,7 @@ import Activity from '@/assets/entities/activity.js';
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
+
 /* DATA */
 const activityCategoriesDialog = ref(false)
 const activitiesList = ref()
@@ -70,11 +78,10 @@ const actionMode = ref(3);
 const loadActivityList = async () => {
   console.log('RELOOOOOOOAAAAAADDD');
   try {
-    let { data, error} = await supabase.rpc('getactivities')//await supabase.from('activities').select('*')
-    if(error) throw error
-
-    activitiesList.value = data
-
+    await supabase.rpc('get_activities').then((data, error) => {
+      if(error) throw error
+      activitiesList.value = data.data
+    });
   } catch (error) {
     console.log(error);
     newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error.message}`)
