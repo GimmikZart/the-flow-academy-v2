@@ -62,16 +62,13 @@ const supabase = useSupabaseClient()
 /* IMPORTS */
 import { useFiltersStore } from "@/store/pill";
 import { ref, onBeforeMount  } from 'vue';
-import Activity from '@/assets/entities/activity.js';
 /* RESPONSE */
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
-
 /* DATA */
 const activityCategoriesDialog = ref(false)
 const activitiesList = ref()
-const newActivity = ref(new Activity())
 const actionMode = ref(3);
 
 /* METHODS */
@@ -84,29 +81,6 @@ const loadActivityList = async () => {
   } catch (error) {
     newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error.message}`)
   }
-}
-
-const saveNewActivity = async () => {
-  try {
-    newSuccessMessage(`La categoria '${newActivityCategory.value.name}' è stata aggiunta al database`);
-  } catch (error) {
-    newErrorMessage(`ERRORE NELL INSERIMENTO A DB DELLA CATEGORIA '${newActivityCategory.value}': ${error}`)
-  } finally {
-    await loadActivityCategoryList()
-    newActivityCategory.value.reset()
-  }
-  
-}
-
-const removeActivityCategory = async (activityCategoryToRemove) => {
-  try {
-    newSuccessMessage(`La categoria '${activityCategoryToRemove.name}' è stata rimossa dal database`);
-  } catch (error) {
-    newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DELLA CATEGORIA '${activityCategoryToRemove.name}': ${error}`)
-  } finally {
-    await loadActivityCategoryList()
-  }
-  
 }
 /* HOOKS */ 
 onBeforeMount(async () => {
