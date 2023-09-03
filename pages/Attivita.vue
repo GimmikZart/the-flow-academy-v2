@@ -4,7 +4,7 @@
     <section class="w-full h-[50px] bg-white mb-5 rounded-flow p-2 flex items-center justify-between">
       <TopBarLabel label="ATTIVITA APERTE"></TopBarLabel>
       <div class="flex h-full">
-        <ActivityCategoryDialog></ActivityCategoryDialog>
+        <ActivityCategoryDialog @update="updatePage"></ActivityCategoryDialog>
         <ActivityDialog></ActivityDialog>
       </div>
       
@@ -37,7 +37,10 @@ import { ref, onBeforeMount  } from 'vue';
 
 const activityInstanceList = ref([]);
 
-
+function updatePage()
+{
+  window.location.reload()
+}
 /* HOOKS */ 
 onBeforeMount(async () => {
 

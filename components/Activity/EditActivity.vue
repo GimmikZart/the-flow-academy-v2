@@ -3,7 +3,7 @@
     <Button size="1rem" severity="warning" rounded text @click="editingActivityDialog = true">
       <Icon name="material-symbols:edit" size="2rem" color="orange" />
     </Button>
-    <Dialog :visible="editingActivityDialog" modal header="Aggiungi Attività" :style="{ width: '50vw', maxHeight: '70vh' }">
+    <Dialog :visible="editingActivityDialog" modal header="Modifica Attività" :style="{ width: '50vw', maxHeight: '70vh' }">
       <div class="grid grid-rows-10 grid-cols-4 gap-6 p-2">
         
 
@@ -30,7 +30,7 @@
         </span>
 
         <span class="p-float-label col-start-1 col-end-2">
-          <Dropdown v-model="editingActivity.value.category_id" :options="categoriesList" optionLabel="name" optionValue="id"  placeholder="Categoria" class="w-full" />
+          <Dropdown v-model="editingActivity.value.category_id" :options="categoriesList" optionLabel="name" optionValue="id" modelValue="category"  placeholder="Categoria" class="w-full" />
           <label for="birth_date">Categoria</label>
         </span>
         <div class="flex items-center col-start-2 col-end-3">
@@ -54,7 +54,6 @@
         </span>
       </div>
       <template #footer>
-        <Button @click="test()">test</Button>
         <Button label="Chiudi" @click="editingActivityDialog = false" outlined />
         <Button label="Salva" severity="success" @click="saveEditingActivity()" outlined />
       </template>
@@ -90,7 +89,6 @@ watch(editingActivityDialog, async () => {
 
 /* METHODS */
 async function saveEditingActivity(){
-  console.log({editingActivity});
   try {
 
     /* UPDATE ACTIVITY INFOS */
@@ -129,35 +127,15 @@ async function saveEditingActivity(){
 
 async function getActivity(){
   try {
-    let { data, error} = await supabase.from('activities').select('*, categories(name)').eq('id', props.activityId).single()
-    let activity = data
-    if(error) throw error
-    {
-      /* CATEGORY */
-      activity.category = null
-      let { data , error} = await supabase.from('categories').select('id, name').eq('id', activity.category_id).single()
+    let p_activity_id = props.activityId;
+    await supabase.rpc("get_activity_for_edit", {
+      p_activity_id
+    }).single().then((data, error) => {
       if(error) throw error
-      activity.category = data
-    }
-    {
-      /* COLLABORATORI */
-      activity.collaborators = []
-      let { data , error} = await supabase.from('activity_collaborator').select('collaborators(*)').eq('activity_id', activity.id)
-      if(error) throw error
-      data.forEach(collaborator => {
-        activity.collaborators.push(collaborator.collaborators.id)
-      });
-    }
-    {
-      /* ISTANZE */
-      let { data, error } = await supabase.from('instance_activities').select('instances(*)').eq('activity_id', activity.id)
-      if(error) throw error
-      activity.instances = data.length
-    }
-    
-    editingActivity.value = data
+      editingActivity.value = data.data
+    });
   } catch (error) {
-    newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error.message}`)
+    newErrorMessage(`ERRORE NELLO SCARICAMENTO DELL'ATTIVITA: ${error.message}`)
   }
 }
 

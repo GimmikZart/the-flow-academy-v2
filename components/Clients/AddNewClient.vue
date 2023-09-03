@@ -101,7 +101,6 @@ const newClient = reactive(new Client());
 const addClientDialog = ref(false)
 
 async function saveNewClient(){
-  console.log(newClient);
   let newClientname = `${newClient.name} ${newClient.surname}`
   try {
     let { error } = await supabase.from("clients").insert(newClient);

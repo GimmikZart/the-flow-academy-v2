@@ -121,7 +121,6 @@ async function saveNewActivity(){
     addActivityDialog.value = false
     emit('saved')
   } catch (error) {
-    console.log(error.message);
     newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${newActivity.name} : ${error}`)
   }
 }

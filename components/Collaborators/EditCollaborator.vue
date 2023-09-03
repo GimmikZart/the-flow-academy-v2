@@ -149,7 +149,6 @@ async function saveEditingCollaborator(){
     editingCollaboratorDialog.value = false
     emit('saved')
   } catch (error) {
-    console.log({error});
     newErrorMessage(`ERRORE NELLA MODIFICA A DB DI ${editingCollaboratorname} : ${error.message}`)
   }
 }

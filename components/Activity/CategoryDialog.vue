@@ -42,6 +42,8 @@ import { ref, onBeforeMount  } from 'vue';
 import ActivityCategory from '@/assets/entities/activityCategory.js';
 /* SUPABASE */
 const supabase = useSupabaseClient()
+/* EMTIS */
+const emit = defineEmits(['update'])
 /* RESPONSE */
 const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
@@ -58,7 +60,6 @@ const loadActivityCategoryList = async () => {
     activityCategoriesList.value = data;
     if(error) throw error
   } catch (error) {
-    console.log(error);
     newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error.message}`)
   }
   
@@ -69,6 +70,7 @@ const saveNewActivityCategory = async () => {
     let { error } = await supabase.from("categories").insert(newActivityCategory.value);
     if(error) throw error
     newSuccessMessage(`La categoria '${newActivityCategory.value.name}' è stata aggiunta al database`);
+    emit('update')
   } catch (error) {
     newErrorMessage(`ERRORE NELL INSERIMENTO A DB DELLA CATEGORIA '${newActivityCategory.value}': ${error.message}`)
   } finally {
@@ -80,7 +82,11 @@ const saveNewActivityCategory = async () => {
 
 const removeActivityCategory = async (activityCategoryToRemove) => {
   try {
+    await supabase.from('categories')
+                        .delete()
+                        .eq('id', activityCategoryToRemove.id);
     newSuccessMessage(`La categoria '${activityCategoryToRemove.name}' è stata rimossa dal database`);
+    emit('update')
   } catch (error) {
     newErrorMessage(`ERRORE NELLA RIMOZIONE A DB DELLA CATEGORIA '${activityCategoryToRemove.name}': ${error}`)
   } finally {

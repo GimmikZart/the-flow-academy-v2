@@ -76,14 +76,12 @@ const actionMode = ref(3);
 
 /* METHODS */
 const loadActivityList = async () => {
-  console.log('RELOOOOOOOAAAAAADDD');
   try {
     await supabase.rpc('get_activities').then((data, error) => {
       if(error) throw error
       activitiesList.value = data.data
     });
   } catch (error) {
-    console.log(error);
     newErrorMessage(`ERRORE NELLO SCARICAMENTO DATI CATEGORIE ATTIVITA: ${error.message}`)
   }
 }

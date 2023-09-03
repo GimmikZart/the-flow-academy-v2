@@ -133,7 +133,6 @@ const roleOptions = ref([])
 
 async function saveNewCollaborator(){
   let newCollaboratorname = `${newCollaborator.name} ${newCollaborator.surname}`
-  console.log(newCollaborator);
   try {
     let { error } = await supabase.from("collaborators").insert(newCollaborator)
     if(error) throw error
@@ -142,7 +141,6 @@ async function saveNewCollaborator(){
     addCollaboratorDialog.value = false
     emit('saved')
   } catch (error) {
-    console.log(error.message);
     newErrorMessage(`${error.message}`)
   }
 }
