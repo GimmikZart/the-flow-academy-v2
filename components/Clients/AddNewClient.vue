@@ -3,7 +3,7 @@
     <Button size="small" severity="success" rounded class="mx-3" @click="addClientDialog = true">
       <Icon name="mdi:add-bold" color="white" />
     </Button>
-    <Dialog :visible="addClientDialog" modal header="Aggiungi Socio" :style="{ width: '50vw' }">
+    <Dialog :visible="addClientDialog" modal header="Aggiungi Socio" :style="{ width: '50vw', maxHeight: '70vh' }">
       <div class="grid grid-rows-10 grid-cols-4 gap-10 p-10">
         <span class="p-float-label p-input-icon-left col-span-full">
           <Icon name="radix-icons:avatar" size="20px"></Icon>

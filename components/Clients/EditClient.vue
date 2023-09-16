@@ -3,7 +3,7 @@
     <Button size="1rem" severity="warning" rounded text @click="editingClientDialog = true">
       <Icon name="material-symbols:edit" size="2rem" color="orange" />
     </Button>
-    <Dialog :visible="editingClientDialog" modal header="Modifica Socio" :style="{ width: '50vw' }">
+    <Dialog :visible="editingClientDialog" modal header="Modifica Socio" :style="{ width: '50vw', maxHeight: '70vh' }">
       <div class="grid grid-rows-10 grid-cols-4 gap-10 p-10">
         <span class="p-float-label p-input-icon-left col-span-full">
           <Icon name="radix-icons:avatar" size="20px"></Icon>

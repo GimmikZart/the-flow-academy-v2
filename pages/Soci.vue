@@ -59,7 +59,9 @@
         <Column field="action"  header="Azione">
           <template #body="slotProps">
             <Button v-if="actionMode == 4" text>
-              <Icon name="carbon:user-profile" size="2rem" color="brown"></Icon>
+              <NuxtLink :to="{ name: 'Socio-id', params: { id: slotProps.data.id } }" class="p-2">
+                <Icon name="carbon:user-profile" size="2rem" color="brown"></Icon>
+              </NuxtLink>
             </Button>
             
             <ClientsEditClient v-else-if="actionMode == 1" :clientId="slotProps.data.id" @saved="loadClientsList()"></ClientsEditClient>
