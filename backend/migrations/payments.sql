@@ -9,6 +9,7 @@ create table
     client_id bigint null,
     collaborator_id bigint null,
     instance_id bigint null,
+    amount_required smallint null,
     constraint payments_pkey primary key (id),
     constraint payments_client_id_fkey foreign key (client_id) references clients (id) on delete restrict,
     constraint payments_collaborator_id_fkey foreign key (collaborator_id) references collaborators (id) on delete restrict,
