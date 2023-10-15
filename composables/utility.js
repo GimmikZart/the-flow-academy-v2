@@ -19,8 +19,6 @@ export default function() {
   }
 
   const getInitials = (name, surname) => {
-    console.log({name});
-    console.log({surname});
     const initials = (name.charAt(0) + surname.charAt(0)).toUpperCase();
     return initials;
   }

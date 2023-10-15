@@ -116,7 +116,7 @@
 
 <script setup>
   import { useFiltersStore } from "@/store/pill";
-  import { ref, onBeforeMount  } from 'vue';
+  import { ref, reactive, onBeforeMount  } from 'vue';
   const supabase = useSupabaseClient()
   const { getInitials, getAge } = utility()
   /* COMPOSABLES */
@@ -127,37 +127,56 @@
   const props = defineProps(['clientId'])
 
   const client = ref();
-  const activitiesList = ref([
-    { 
-      title: "Titolo corso lungo e articolato da principiante",
-      img: ""
-    },
-    { 
-      title: "Titolo meno lungo",
-      img: ""
-    },
-  ])
+  const activitiesList = ref([])
 
-  const paymentsList = ref([
-    { 
-      title: "Titolo corso lungo e articolato da principiante",
-      img: ""
-    },
-    { 
-      title: "Titolo meno lungo",
-      img: ""
-    },
-  ])
+  const paymentsList = ref([])
 
   const loadClient = async () => {
-    try {
-      let { data, error} = await supabase.from('clients').select('*').eq('id', route.params.id ).single();
-      if(error) throw error
-      client.value = data
-    } catch (error) {
-      newErrorMessage(`ERRORE NELL'AQUISIZIONE DI SOCI DAL DB: ${error.message}`)
-    }
+    client.value = await getClient()
+    activitiesList.value = await getInstances()
+    paymentsList.value = await getPayments()
   } 
+
+  const getClient = async () => {
+    try {
+      let { data, error } = await supabase
+        .from('clients')
+        .select('*')
+        .eq('id', route.params.id)
+        .single();
+      if(error) throw error
+      return data
+    } catch (error) {
+      newErrorMessage(`ERRORE NELL'AQUISIZIONE DEL SOCIO DAL DB: ${error.message}`)
+    }
+  }
+
+  const getPayments = async () => {
+    try {
+      let { data, error } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('client_id', route.params.id);
+      if(error) throw error
+      return data
+    } catch (error) {
+      newErrorMessage(`ERRORE NELL'AQUISIZIONE DEI PAGAMENTI DEL SOCIO: ${error.message}`)
+    }
+  }
+
+  const getInstances = async () => {
+    try {
+      console.log(route.params.id);
+      let { data, error } = await supabase
+        .from('client_instance')
+        .select('*')
+        .eq('client_id', parseInt(route.params.id));
+      if(error) throw error
+      return data
+    } catch (error) {
+      newErrorMessage(`ERRORE NELL'AQUISIZIONE DELLE ATTIVITA' DEL SOCIO: ${error.message}`)
+    }
+  }
 
 /* HOOKS */ 
   onBeforeMount(async () => {
