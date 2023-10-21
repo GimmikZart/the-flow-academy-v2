@@ -24,41 +24,41 @@
         <!-- INFO -->
         <div class="w-100 h-full flex flex-col justify-between py-3">
           <!-- BOX -->
-          <div class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-3 h-full h-full">
+          <div class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full h-full">
             <h3 class="font-bold text-sm">Status</h3>
             <ClientsStatusLabel :clientStatus="client.status"></ClientsStatusLabel>
           </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-3 h-full">
+          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
             <h3 class="font-bold text-sm">Sesso</h3>
             <Icon v-if="client.gender == true" name="icon-park-solid:boy-one" size="30" color="blue"></Icon>
             <Icon v-else name="icon-park-solid:girl-one" color="red" size="30"></Icon>
           </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-3 h-full">
+          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
             <h3 class="font-bold text-sm">Email</h3>
             <span v-if="client.email && client.email != ''">{{ client.email }}</span>
             <span v-else> --- </span>
           </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-3 h-full">
+          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
             <h3 class="font-bold text-sm">Telefono</h3>
             <span v-if="client.telephone && client.telephone != ''">{{ client.telephone }}</span>
             <span v-else> --- </span>
           </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-3 h-full">
+          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
             <h3 class="font-bold text-sm">Data di nascita</h3>
             <span v-if="client.dateOfBirth && client.dateOfBirth != ''">{{ client.dateOfBirth }}</span>
             <span v-else> --- </span>
           </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-3 h-full">
+          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
             <h3 class="font-bold text-sm">Indirizzo</h3>
             <span v-if="client.address && client.address != ''">{{ client.address }}</span>
             <span v-else> --- </span>
           </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-3 h-full">
+          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
             <h3 class="font-bold text-sm">Primo contatto</h3>
             <span v-if="client.firstContact && client.firstContact != ''">{{ client.firstContact }}</span>
             <span v-else> --- </span>
           </div>
-          <div  class="bg-white w-full py-2 px-4 rounded-lg my-3 h-full">
+          <div  class="bg-white w-full py-2 px-4 rounded-lg my-1 h-full">
             <h3 class="font-bold text-sm">Misure</h3>
             <div class="flex justify-between items-center gap-2">
               <!-- CAPPELLO -->
@@ -87,26 +87,26 @@
               </div>
             </div>
           </div>
-          <div  class="bg-white w-full py-2 px-4 rounded-lg my-3 h-full">
+          <div  class="bg-white w-full py-2 px-4 rounded-lg my-1 h-full">
             <h3 class="font-bold text-sm">Note</h3>
             <Textarea class="w-full" :value="client.notes"></Textarea>
           </div>
         </div>
       </div>
       <!-- RIGHT -->
-      <div class="w-2/3 h-full flex flex-col pl-10 py-10">
+      <div class="w-2/3 h-full flex flex-col pl-10">
         <!-- ACTIVITIES -->
-        <div class="border-2 border-white rounded-flow m-4 p-3 px-5 flex flex-col h-1/2 min-h-[350px]">
+        <div class="rounded-flow p-3 mb-1 px-5 flex flex-col h-2/5 min-h-[300px]">
           <h1 class="text-center font-bold text-2xl">Attività</h1>
           <div class="h-full py-5 flex gap-3">
             <ActivityBox v-for="(activity, idx) in activitiesList" :key="idx" :activityInfo="activity"></ActivityBox>
           </div>
         </div>
         <!-- PAYMENTS -->
-        <div class="border-2 border-white rounded-flow m-4 p-3 px-5 flex flex-col h-1/2 min-h-[350px]">
+        <div class="rounded-flow p-3 mt-1 px-5 flex flex-col h-3/5 min-h-[300px]">
           <h1 class="text-center font-bold text-2xl">Pagamenti</h1>
           <div class="h-full py-5 flex gap-3">
-            <PaymentsBox v-for="(payment, idx) in paymentsList" :key="idx" :activityInfo="payment"></PaymentsBox>
+            <PaymentsBox v-for="(payment, idx) in paymentsList" :key="idx" :paymentInfo="payment"></PaymentsBox>
           </div>
         </div>
       </div>
@@ -155,7 +155,7 @@
     try {
       let { data, error } = await supabase
         .from('payments')
-        .select('*')
+        .select('*, instances(name)')
         .eq('client_id', route.params.id);
       if(error) throw error
       return data

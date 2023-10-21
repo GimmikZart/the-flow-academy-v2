@@ -38,7 +38,14 @@
 import { useFiltersStore } from "@/store/pill";
 import Payment from '@/assets/entities/payment.js';
 /* PROPS */
-const props = defineProps(['editingClient'])
+const props = defineProps({
+  editingClient: {
+    type: Object,
+    required: true
+  }
+}) 
+/* SUPABASE */
+const supabase = useSupabaseClient()
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
@@ -49,6 +56,7 @@ const { newSuccessMessage, newErrorMessage } = filtersStore
 /* DATA */
 const newPayment = reactive(new Payment(0, props.editingClient));
 const addPaymentDialog = ref(false)
+const suggestedPayments = ref([])
 
 async function saveNewPayment(){
   let clientName = `${props.editingClient.name} ${props.editingClient.surname}`
@@ -61,6 +69,22 @@ async function saveNewPayment(){
     newErrorMessage(`ERRORE NELL INSERIMENTO A DB DI ${clientName} : ${error}`)
   }
 }
+
+/* async function getSuggestedPayments(){
+  console.log('PIGLIA PAGAMENTI');
+  try {
+    let client_id_param = props.editingClient.id
+    let { data, error } = await supabase.rpc('get_incomplete_payments', { client_id_param })
+    if(error) throw error
+    suggestedPayments.value = data
+  } catch (error) {
+    console.log(error.message);
+    newErrorMessage(`ERRORE NELL'AQUISIZIONE DEI PAGAMENTI SUGGERITI DAL DB: ${error.message}`)
+  }
+}
+
+getSuggestedPayments() */
+
 </script>
 
 <style lang="scss" scoped>

@@ -1,6 +1,6 @@
 <template>
     <!-- BOX -->
-    <div class="h-full w-[250px] rounded-lg overflow-hidden bg-white min-h-[250px] flex flex-col">
+    <div class="h-full w-[250px] rounded-lg overflow-hidden bg-white flex flex-col">
         <div class="w-full h-full bg-gray">
         <!-- immagine -->
         </div>
