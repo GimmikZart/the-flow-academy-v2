@@ -50,7 +50,7 @@ import { ref } from "vue"
     }
 
     const doPayment = function(){
-
+        
     }
 
     /* ON CREATE */

@@ -116,7 +116,7 @@
 
 <script setup>
   import { useFiltersStore } from "@/store/pill";
-  import { ref, reactive, onBeforeMount  } from 'vue';
+  import { ref, onBeforeMount  } from 'vue';
   const supabase = useSupabaseClient()
   const { getInitials, getAge } = utility()
   /* COMPOSABLES */
@@ -169,7 +169,7 @@
       console.log(route.params.id);
       let { data, error } = await supabase
         .from('client_instance')
-        .select('*')
+        .select('*, instances ( name )')
         .eq('client_id', parseInt(route.params.id));
       if(error) throw error
       return data

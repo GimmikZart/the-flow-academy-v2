@@ -1,50 +1,69 @@
 export default class Payment {
   constructor(  
-                type = null, 
-                person = null, 
+                id = null,
+                client_id = null,
+                collaborator_id = null,
+                type = 1,
                 notes = '', 
                 amount = 0,
-                date = new Date(), 
-                activities = [],
-                paid_in_date = null,
-                status = false,
-                amount_required = null) {
-    this.date = date,
-    this.person = person;
-    this.type = type;
-    this.notes = notes, 
+                paid_in_date = new Date(),
+                status = false) {
+    this.id = id,
+    this.type = type, 
+    this.notes = notes 
     this.amount = amount,
-    this.activities = activities
-    this.paid_in_date = paid_in_date
-    this.amount_required = amount_required
+    this.paid_in_date = paid_in_date, 
+    this.client_id = client_id,
+    this.collaborator_id = collaborator_id,
     this.status = status
   }
 
   // Metodo per convertire un oggetto Client in un oggetto JavaScript standard
   toPlainObject() {
     return {
-      date: this.date,
-      person: this.person,
-      type: this.type,
-      amount : this.amount,
-      notes: this.notes,
-      activities: this.activities,
-      amount_required: this.amount_required,
-      paid_in_date: this.paid_in_date,
+      id: this.id,
+      type: this.type, 
+      notes: this.notes, 
+      amount: this.amount,
+      paid_in_date:this.paid_in_date, 
+      client_id: this.client_id,
+      collaborator_id: this.collaborator_id,
       status: this.status
     };
   }
 
   // Metodo per resettare un oggetto Payment 
   reset() {
-    this.date = new Date(),
-    this.person = null,
-    this.type = null,
+    this.id = null,
+    this.type = null, 
+    this.notes = '' 
     this.amount = 0,
-    this.notes = '',
-    this.activities = []
-    this.amount_required = null,
-    this.paid_in_date = null,
+    this.paid_in_date = new Date(), 
+    this.client_id = null,
+    this.collaborator_id = null,
     this.status = false
+  }
+
+  fromClient(clientId){
+    this.type = 1
+    this.client_id = clientId
+  }
+
+  toClient(clientId){
+    console.log('EH BHE?');
+    this.type = 0
+    this.client_id = clientId
+    console.log(this);
+    return this;
+  }
+
+  fromCollaborator(collaboratorId){
+    this.type = 1
+    this.collaborator_id = collaboratorId
+  }
+
+  toCollaborator(collaboratorId){
+    this.type = 0
+    this.collaborator_id = collaboratorId
   }
 }

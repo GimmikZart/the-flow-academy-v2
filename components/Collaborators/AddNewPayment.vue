@@ -47,7 +47,7 @@ const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 
 /* DATA */
-const newPayment = reactive(new Payment(1, props.editingCollaborator));
+const newPayment = reactive(new Payment().toCollaborator(props.editingCollaborator.id));
 const addPaymentDialog = ref(false)
 
 async function saveNewPayment(){

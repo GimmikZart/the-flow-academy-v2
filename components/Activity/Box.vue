@@ -4,7 +4,7 @@
         <div class="w-full h-full bg-gray">
         <!-- immagine -->
         </div>
-        <h3 class="p-3 font-bold text-base w-full min-h-[25%]">{{activityInfo.title}}</h3>
+        <h3 class="p-3 font-bold text-base w-full min-h-[25%]">{{activityInfo.instances.name}}</h3>
     </div>
 </template>
 <script setup>
