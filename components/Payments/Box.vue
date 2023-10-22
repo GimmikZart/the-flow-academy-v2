@@ -16,7 +16,8 @@
                 </template>
             </div>
         </div>
-        <div class="rounded-lg p-2 mx-3 cursor-pointer" :class="cardColor" @click="doPayment()">
+        <ClientsAddNewPayment v-if="!isFullPaid" :editingClient="clientInfo" :directPayment="paymentInfo"></ClientsAddNewPayment>
+        <div v-else class="rounded-lg p-2 mx-3 cursor-pointer" :class="cardColor" @click="doPayment()">
             <h3 class="font-bold text-xl text-center text-white">70</h3>
             <Icon v-if="isFullPaid" name="mdi:check-bold" size="2rem" color="green"></Icon>
         </div>
@@ -25,7 +26,17 @@
 <script setup>
 import { ref } from "vue"
     /* PROPS */
-    const props = defineProps(['paymentInfo'])
+    const props = defineProps({
+        paymentInfo: {
+            type: Object,
+            required: true
+        },
+        clientInfo: {
+            type: Object,
+            required: true
+        }
+    })
+
 
     const cardColor = ref("")
     const cardTitle = ref("")
@@ -33,11 +44,12 @@ import { ref } from "vue"
     const isFullPaid = ref(false)
 
     const setProperties = function(){
+        debugger;
         if(props.paymentInfo.amount == 0) {
             cardColor.value = "bg-hard-pink" 
             cardTitle.value = "DA RICEVERE"
             paymentValue.value = props.paymentInfo.amountRequired
-        } else if(props.paymentInfo.amount < props.paymentInfo.amountRequired) {
+        } else if(props.paymentInfo.amount < props.paymentInfo.amount_required) {
             cardColor.value = "bg-orange"
             cardTitle.value = "RICEVUTO PARZIALE" 
             paymentValue.value = props.paymentInfo.amountRequired - props.paymentInfo.amount
@@ -50,7 +62,7 @@ import { ref } from "vue"
     }
 
     const doPayment = function(){
-        
+
     }
 
     /* ON CREATE */

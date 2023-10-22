@@ -106,7 +106,7 @@
         <div class="rounded-flow p-3 mt-1 px-5 flex flex-col h-3/5 min-h-[300px]">
           <h1 class="text-center font-bold text-2xl">Pagamenti</h1>
           <div class="h-full py-5 flex gap-3">
-            <PaymentsBox v-for="(payment, idx) in paymentsList" :key="idx" :paymentInfo="payment"></PaymentsBox>
+            <PaymentsBox v-for="(payment, idx) in paymentsList" :key="idx" :paymentInfo="payment" :clientInfo="client"></PaymentsBox>
           </div>
         </div>
       </div>
