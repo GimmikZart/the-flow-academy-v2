@@ -1,4 +1,5 @@
 
+import { useDateFormat } from '@vueuse/core'
 export default function() {
 
   const replacerFunc = () => {
@@ -39,7 +40,12 @@ export default function() {
   }
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('it-IT')
+    //return new Date(date).toLocaleDateString('it-IT')
+    return useDateFormat(date, 'DD/MM/YYYY').value
+  }
+
+  const formatDateMonthYear = (date) => {
+    return useDateFormat(date, 'MMMM YYYY').value.toUpperCase()
   }
 
   function deepCopy(obj) {
@@ -81,6 +87,10 @@ export default function() {
     return obj;
   }
 
+  function reloadApp(){
+    window.location.reload()
+  }
+
   return {
     resolveCircularJsonError,
     getInitials,
@@ -88,6 +98,8 @@ export default function() {
     formatDate,
     deepCopy,
     isMonthPaid,
-    convertUndefinedToNull
+    convertUndefinedToNull,
+    reloadApp,
+    formatDateMonthYear
   }
 }

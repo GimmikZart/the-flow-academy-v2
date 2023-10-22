@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="directPayment" class="rounded-lg p-2 flex items-center justify-between mx-3 bg-hard-pink cursor-pointer" @click="addPaymentDialog = true">
+    <div v-if="directPayment" class="rounded-lg p-2 flex items-center justify-between bg-hard-pink cursor-pointer" :class="directPayment.amount == 0? 'bg-hard-pink' : 'bg-orange'" @click="addPaymentDialog = true">
       <span class="w-1/3"></span>
       <h3 class="font-bold text-xl text-center text-white w-1/3">{{getDifferenceOfPaymentEntity(directPayment)}}</h3>
       <Icon class="w-1/3" name="ph:hand-coins" size="2rem" color="white"></Icon>
