@@ -19,3 +19,28 @@
     }
   }
 }
+
+.smooth{
+  transition: all 0.3s ease-out;
+}
+
+.smooth-fast{
+  transition: all 0.15s ease-out;
+}
+
+.absolute-center-y{
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.flickering{
+  animation: flicker 0.3s infinite linear;
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px 5px rgba(11, 17, 19, 0.2);
+}
+
+@keyframes flicker {
+  0% {rotate: -0.5deg }
+  50% { rotate: 0.5deg }
+  100% { rotate: -0.5deg}
+}

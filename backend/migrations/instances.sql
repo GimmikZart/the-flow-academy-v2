@@ -4,5 +4,6 @@ create table
     name character varying not null,
     created_at timestamp with time zone not null default now(),
     level text not null,
+    cost int null
     constraint activityOpen_pkey primary key (id)
   ) tablespace pg_default;

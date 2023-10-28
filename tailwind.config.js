@@ -23,7 +23,10 @@ module.exports = {
       'light-gray': '#EFF3F8',
       'input-light-gray': '#ced4da',
       'flow-brown': '#B06C2E',
-      'hard-pink': 'rgb(252, 121, 142)'
+      'hard-pink': 'rgb(252, 121, 142)',
+      'warning': "#F59E0B",
+      "danger": "#EF4444",
+      "success": "#22C55E"
     },
     borderRadius: {
       'none': '0',

@@ -5,6 +5,7 @@
       <TopBarLabel label="SOCIO"></TopBarLabel>
   
       <div class="flex items-center h-full top-tool-box">
+        <TopBarActionModes entity="activity" @change-action-mode="(newMode) => actionMode = newMode.value"></TopBarActionModes>
       </div>
     </section>
 
@@ -20,117 +21,82 @@
           </div>
           <!-- nome + cognome -->
           <h1 class="text-4xl font-bold">{{ client.name }} {{ client.surname }}</h1>
+          <ClientsEditClient v-if="isEditMode" :client-id="client.id" class="ml-auto"></ClientsEditClient>
+          <ClientsRemoveClient v-if="isRemoveMode" :client-to-remove="client" class="ml-auto"></ClientsRemoveClient>
         </div>
         <!-- INFO -->
-        <div class="w-100 h-full flex flex-col justify-between py-3">
-          <!-- BOX -->
-          <div class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full h-full">
-            <h3 class="font-bold text-sm">Status</h3>
-            <ClientsStatusLabel :clientStatus="client.status"></ClientsStatusLabel>
-          </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
-            <h3 class="font-bold text-sm">Sesso</h3>
-            <Icon v-if="client.gender == true" name="icon-park-solid:boy-one" size="30" color="blue"></Icon>
-            <Icon v-else name="icon-park-solid:girl-one" color="red" size="30"></Icon>
-          </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
-            <h3 class="font-bold text-sm">Email</h3>
-            <span v-if="client.email && client.email != ''">{{ client.email }}</span>
-            <span v-else> --- </span>
-          </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
-            <h3 class="font-bold text-sm">Telefono</h3>
-            <span v-if="client.telephone && client.telephone != ''">{{ client.telephone }}</span>
-            <span v-else> --- </span>
-          </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
-            <h3 class="font-bold text-sm">Data di nascita</h3>
-            <span v-if="client.dateOfBirth && client.dateOfBirth != ''">{{ client.dateOfBirth }}</span>
-            <span v-else> --- </span>
-          </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
-            <h3 class="font-bold text-sm">Indirizzo</h3>
-            <span v-if="client.address && client.address != ''">{{ client.address }}</span>
-            <span v-else> --- </span>
-          </div>
-          <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
-            <h3 class="font-bold text-sm">Primo contatto</h3>
-            <span v-if="client.firstContact && client.firstContact != ''">{{ client.firstContact }}</span>
-            <span v-else> --- </span>
-          </div>
-          <div  class="bg-white w-full py-2 px-4 rounded-lg my-1 h-full">
-            <h3 class="font-bold text-sm">Misure</h3>
-            <div class="flex justify-between items-center gap-2">
-              <!-- CAPPELLO -->
-              <div class="w-full border border-gray-200 border-solid p-2 rounded-lg">
-                <Icon name="mingcute:hat-2-line"  size="30" class="mr-2"></Icon>
-                <span v-if="client.sizes.head && client.sizes.head != ''">{{ client.sizes.head }}</span>
-                <span v-else> --- </span>
-              </div>
-              <!-- T-SHIRT -->
-              <div class="w-full border border-gray-200 border-solid p-2 rounded-lg">
-                <Icon name="ion:shirt-outline"  size="30" class="mr-2"></Icon>
-                <span v-if="client.sizes.shirt && client.sizes.shirt != ''">{{ client.sizes.shirt }}</span>
-                <span v-else> --- </span>
-              </div>
-              <!-- PANTALONI -->
-              <div class="w-full border border-gray-200 border-solid p-2 rounded-lg">
-                <Icon name="ph:pants-thin"  size="30" class="mr-2"></Icon>
-                <span v-if="client.sizes.pants && client.sizes.pants != ''">{{ client.sizes.pants }}</span>
-                <span v-else> --- </span>
-              </div>
-              <!-- SCARPE -->
-              <div class="w-full border border-gray-200 border-solid p-2 rounded-lg">
-                <Icon name="mingcute:shoe-line"  size="30" class="mr-2"></Icon>
-                <span v-if="client.sizes.shoes && client.sizes.shoes != ''">{{ client.sizes.shoes }}</span>
-                <span v-else> --- </span>
-              </div>
-            </div>
-          </div>
-          <div  class="bg-white w-full py-2 px-4 rounded-lg my-1 h-full">
-            <h3 class="font-bold text-sm">Note</h3>
-            <Textarea class="w-full" :value="client.notes"></Textarea>
-          </div>
-        </div>
+        <SocioInfoSection :client="client"></SocioInfoSection>
       </div>
       <!-- RIGHT -->
       <div class="w-2/3 h-full flex flex-col pl-10">
         <!-- ACTIVITIES -->
-        <div class="rounded-flow p-3 mb-1 px-5 flex flex-col h-2/5 min-h-[300px]">
-          <h1 class="text-center font-bold text-2xl">Attività</h1>
-          <div class="h-full py-5 flex gap-3">
-            <ActivityBox v-for="(activity, idx) in activitiesList" :key="idx" :activityInfo="activity"></ActivityBox>
-          </div>
-        </div>
+        <SocioCardSection card-name="Attività" class="h-2/5" @add="addActivityDialog = true; getActivitiesList()">
+          <template #cards>
+            <ActivityBox v-for="(activity, idx) in activitiesList" :key="idx" :activityInfo="activity" :edit-mode="isEditMode" :remove-mode="isRemoveMode" @handled="loadClient();"></ActivityBox>
+          </template>
+        </SocioCardSection>
         <!-- PAYMENTS -->
-        <div class="rounded-flow p-3 mt-1 px-5 flex flex-col h-3/5 min-h-[300px]">
-          <h1 class="text-center font-bold text-2xl">Pagamenti</h1>
-          <div class="h-full py-5 flex gap-3">
+        <SocioCardSection card-name="Pagamenti" class="h-3/5" @add="addPayment()">
+          <template #cards>
             <PaymentsBox v-for="(payment, idx) in paymentsList" :key="idx" :paymentInfo="payment" :clientInfo="client"></PaymentsBox>
-          </div>
-        </div>
+          </template>
+        </SocioCardSection>
       </div>
     </section>
+
+    <!-- DIALOGS -->
+    <Dialog :visible="addActivityDialog" modal header="Iscrivi ad attività" :style="{ minWidth: '20vw' }">
+      <Dropdown class="w-full" v-model="selectedNewActivity" :options="allActivities">
+        <template #value="slotProps">
+          <div v-if="slotProps.value" class="flex align-items-center">
+            <span class="font-bold">{{ slotProps.value.name }}</span>
+            <span class="mx-2">|</span>
+            <Chip class="bg-flow-brown text-white">{{ slotProps.value.level }}</Chip>
+          </div>
+        </template>
+        <template #option="slotProps">
+          <div class="flex align-items-center">
+            <span class="font-bold">{{ slotProps.option.name }}</span>
+            <span class="mx-2">|</span>
+            <Chip class="bg-flow-brown text-white">{{ slotProps.option.level }}</Chip>
+          </div>
+        </template>
+      </Dropdown>
+      <template #footer>
+        <Button text label="Annulla" @click="addActivityDialog = false" severity="info" />
+        <Button text label="Iscrivi"  @click="addActivity()" severity="success"/>
+      </template>
+    </Dialog>
   </nuxt-layout>
 </template>
 
 <script setup>
   import { useFiltersStore } from "@/store/pill";
-  import { ref, onBeforeMount  } from 'vue';
+  import { ref, onBeforeMount, computed  } from 'vue';
+  import ClientInstance from "@/assets/entities/clientInstance"
   const supabase = useSupabaseClient()
   const { getInitials, getAge } = utility()
   /* COMPOSABLES */
   const route = useRoute()
   const filtersStore = useFiltersStore()
-  const { newErrorMessage } = filtersStore
+  const { newSuccessMessage, newErrorMessage } = filtersStore
   /* PROPS */
   const props = defineProps(['clientId'])
 
+  /* DATA */
   const client = ref();
   const activitiesList = ref([])
-
   const paymentsList = ref([])
+  const actionMode = ref(4)
+  const addActivityDialog = ref(false)
+  const allActivities = ref([])
+  const selectedNewActivity = ref()
 
+  /* COMPUTED */
+  const isVisitMode = computed(() => actionMode.value == 4);
+  const isEditMode = computed(() => actionMode.value == 1);
+  const isRemoveMode = computed(() => actionMode.value == 2);
+  /* METHODS */
   const loadClient = async () => {
     client.value = await getClient()
     activitiesList.value = await getInstances()
@@ -169,13 +135,49 @@
       console.log(route.params.id);
       let { data, error } = await supabase
         .from('client_instance')
-        .select('*, instances ( name )')
+        .select('*, instances ( name, level )')
         .eq('client_id', parseInt(route.params.id));
       if(error) throw error
       return data
     } catch (error) {
       newErrorMessage(`ERRORE NELL'AQUISIZIONE DELLE ATTIVITA' DEL SOCIO: ${error.message}`)
     }
+  }
+  
+  const getActivitiesList = async () => {
+    try {
+      let { data, error } = await supabase
+        .from('instances')
+        .select('id, name, level')
+        console.log({data});
+      if(error) throw error
+      allActivities.value = data
+    } catch (error) {
+      newErrorMessage(`ERRORE NELL'AQUISIZIONE DELLA LISTA COMPLESSIVA DELLE ATTIVITA': ${error.message}`)
+    }
+    
+  }
+
+  const addActivity = async () => {
+    console.log('ADD ACTIVITY');
+    let newActivity = new ClientInstance(client.value.id, selectedNewActivity.value.id)
+    console.log({newActivity});    
+    try {
+      let { error } = await supabase
+        .from('client_instance')
+        .insert(newActivity)
+      if(error) throw error
+      newSuccessMessage(`${client.value.name} ${client.value.surname} è stato iscritto a ${selectedNewActivity.value.name}`);
+      loadClient()
+    } catch (error) {
+      newErrorMessage(`ERRORE NELL'ISCRIZIONE ALL'ATTIVITA': ${error.message}`)
+    } finally {
+      addActivityDialog.value = false
+    }
+  }
+
+  const addPayment = async () => {
+    console.log('ADD PAYMENT');
   }
 
 /* HOOKS */ 
