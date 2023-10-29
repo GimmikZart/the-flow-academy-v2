@@ -77,10 +77,6 @@ const { reloadApp } = utility()
 /* SUPABASE */
 const supabase = useSupabaseClient()
 
-/* RESPONSE */
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
-
 /* PROPS */
 const props = defineProps({
     visible: {
