@@ -30,18 +30,28 @@
       <!-- RIGHT -->
       <div class="w-2/3 h-full flex flex-col pl-10">
         <!-- ACTIVITIES -->
-        <SocioCardSection card-name="Attività" class="h-2/5" @add="addActivityDialog = true; getActivitiesList()">
+        <SocioCardSection card-name="Attività" class="h-2/5">
+          <template #button>
+            <Button text @click="addActivityDialog = true; getActivitiesList()">
+                <template #icon>
+                  <Icon name="zondicons:add-outline" color="green" size="30"></Icon>
+                </template>
+            </Button>
+          </template>
           <template #cards>
             <ActivityBox v-for="(activity, idx) in activitiesList" :key="idx" :activityInfo="activity" :edit-mode="isEditMode" :remove-mode="isRemoveMode" @handled="loadClient();"></ActivityBox>
           </template>
         </SocioCardSection>
         <!-- PAYMENTS -->
-        <SocioCardSection card-name="Pagamenti" class="h-3/5" @add="addPayment()">
+        <SocioCardSection card-name="Pagamenti" class="h-3/5">
+          <template #button>
+            <ClientsAddNewPayment :editing-client="client" @saved="reloadApp()"></ClientsAddNewPayment>
+          </template>
           <template #cards>
-            <PaymentsBox v-for="(payment, idx) in paymentsList" :key="idx" :paymentInfo="payment" :clientInfo="client"></PaymentsBox>
+            <PaymentsBox v-for="(payment, idx) in paymentsList" :key="idx" :paymentInfo="payment" :clientInfo="client" :edit-mode="isEditMode" :remove-mode="isRemoveMode"></PaymentsBox>
           </template>
         </SocioCardSection>
-      </div>
+      </div>>
     </section>
 
     <!-- DIALOGS -->
@@ -75,7 +85,7 @@
   import { ref, onBeforeMount, computed  } from 'vue';
   import ClientInstance from "@/assets/entities/clientInstance"
   const supabase = useSupabaseClient()
-  const { getInitials, getAge } = utility()
+  const { getInitials, getAge, reloadApp } = utility()
   /* COMPOSABLES */
   const route = useRoute()
   const filtersStore = useFiltersStore()
@@ -121,7 +131,7 @@
     try {
       let { data, error } = await supabase
         .from('payments')
-        .select('*, instances(name)')
+        .select('*, instances(name, level)')
         .eq('client_id', route.params.id);
       if(error) throw error
       return data

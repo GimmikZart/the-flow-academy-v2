@@ -11,13 +11,13 @@
             </div>
             
         </div>
-        <Button v-if="editMode" rounded :severity="getSuspendSeverity" class="absolute bottom-0 absolute-center-y bg-white" @click="handleSuspendActivity()">
+        <Button v-if="editMode" rounded :severity="getSuspendSeverity" class="absolute bottom-3 absolute-center-y bg-white" @click="handleSuspendActivity()">
             <template #icon>
                 <Icon v-if="activityInfo.status" name="mdi:hourglass" color="white" size="30"></Icon>
                 <Icon v-else name="icon-park-solid:back" color="white" size="30"></Icon>
             </template>
         </Button>
-        <Button v-else-if="removeMode" rounded severity="danger" class="absolute bottom-0 absolute-center-y bg-white" @click="removeActivity()">
+        <Button v-else-if="removeMode" rounded severity="danger" class="absolute bottom-3 absolute-center-y bg-white" @click="removeActivity()">
             <template #icon>
                 <Icon name="material-symbols:delete" color="white" size="30"></Icon>
             </template>

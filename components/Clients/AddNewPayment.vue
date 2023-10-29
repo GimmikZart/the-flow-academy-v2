@@ -11,14 +11,18 @@
     <Dialog :visible="addPaymentDialog" modal :header="`${editingClient.name} ${editingClient.surname} sta pagando:`" :style="{ width: '30vw' }">
       <div class="grid grid-rows-3 grid-cols-2 gap-10 p-10">
         <span class="p-float-label col-start-1 col-end-3">
-          <Dropdown v-model="selectedPayment" :options="suggestedPayments" class="w-full" placeholder="Per le seguenti attività">
+          <Dropdown v-model="selectedPayment" showClear :options="suggestedPayments" class="w-full" placeholder="Per le seguenti attività">
             <template #value="slotProps">
-              <h5 v-if="slotProps.value">{{ slotProps.value.instance_name }} / {{ formatDate(slotProps.value.date) }}</h5>
+              <div v-if="slotProps.value" class="flex">
+                <h5>{{ slotProps.value.instance_name }}</h5>
+                <h5 v-if="slotProps.value.date"> / {{ formatDate(slotProps.value.date) }}</h5>
+              </div>
             </template>
             <template #option="slotProps">
               <div class="flex flex-col align-items-center">
-                <h5 class="font-bold">{{ slotProps.option.instance_name }} / {{ formatDate(slotProps.option.date) }}</h5>
-                <h6>da pagare: {{ getDifferenceOfPaymentEntity(slotProps.option) }}</h6>
+                <h5 class="font-bold">{{ slotProps.option.instance_name }}</h5>
+                <h5 v-if="slotProps.option.date">{{ formatDate(slotProps.option.date) }}</h5>
+                <h6 v-if="slotProps.option.amount_required">da pagare: {{ getDifferenceOfPaymentEntity(slotProps.option) }}</h6>
               </div>
             </template>
           </Dropdown>
@@ -55,6 +59,7 @@ import Payment from '@/assets/entities/payment.js';
 import { useDateFormat } from '@vueuse/core'
 import { watch, ref } from 'vue'
 const { getDifferenceOfPaymentEntity } = paymentsUtils()
+
 /* PROPS */
 const props = defineProps({
   editingClient: {
@@ -113,7 +118,12 @@ async function getSuggestedPayments(){
     let { data, error } = await supabase.rpc('get_incomplete_payments', { client_id_param })
     if(error) throw error
     suggestedPayments.value = data
-    if(suggestedPayments.value.length > 0) selectedPayment.value = suggestedPayments.value[0] // auto seleziona il primo risultato se presente
+    suggestedPayments.value.push(
+      {
+        instance_name: "ALTRO"
+      }
+    )
+    selectedPayment.value = suggestedPayments.value[0] // auto seleziona il primo risultato se presente
   } catch (error) {
     console.log(error.message);
     newErrorMessage(`ERRORE NELL'AQUISIZIONE DEI PAGAMENTI SUGGERITI DAL DB: ${error.message}`)
