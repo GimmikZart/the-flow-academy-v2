@@ -52,7 +52,7 @@
             </template>
         </Button>
     </div>
-    <ClientsEditPayment :visible="showDialog" :client="clientInfo" :edit-payment="paymentInfo" @close="showDialog = false"></ClientsEditPayment>
+    <ClientsHandlePayment :visible="showDialog" :client="clientInfo" :edit-payment="paymentInfo" @close="showDialog = false"></ClientsHandlePayment>
 </template>
 <script setup>
 import { ref, computed } from "vue"

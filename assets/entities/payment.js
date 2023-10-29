@@ -3,18 +3,22 @@ export default class Payment {
                 id = null,
                 client_id = null,
                 collaborator_id = null,
+                instance_id = null,
                 type = 1,
                 notes = '', 
                 amount = 0,
+                amount_required = 0,
                 paid_in_date = new Date(),
                 status = false) {
     this.id = id,
     this.type = type, 
     this.notes = notes 
     this.amount = amount,
+    this.amount_required = 0,
     this.paid_in_date = paid_in_date, 
     this.client_id = client_id,
     this.collaborator_id = collaborator_id,
+    this.instance_id = instance_id,
     this.status = status
   }
 
@@ -25,9 +29,11 @@ export default class Payment {
       type: this.type, 
       notes: this.notes, 
       amount: this.amount,
+      amount_required: this.amount_required,
       paid_in_date:this.paid_in_date, 
       client_id: this.client_id,
       collaborator_id: this.collaborator_id,
+      instance_id : this.instance_id,
       status: this.status
     };
   }
@@ -38,9 +44,11 @@ export default class Payment {
     this.type = null, 
     this.notes = '' 
     this.amount = 0,
+    this.amount_required = 0,
     this.paid_in_date = new Date(), 
     this.client_id = null,
     this.collaborator_id = null,
+    this.instance_id = null,
     this.status = false
   }
 
@@ -50,7 +58,6 @@ export default class Payment {
   }
 
   toClient(clientId){
-    console.log('EH BHE?');
     this.type = 0
     this.client_id = clientId
     console.log(this);
