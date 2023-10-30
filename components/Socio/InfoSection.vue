@@ -1,5 +1,5 @@
 <template>
-    <div class="w-100 h-full flex flex-col justify-between py-3">
+    <div class="w-100 h-full flex flex-col justify-between py-3 overflow-auto">
         <!-- BOX -->
         <div class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full h-full">
             <h3 class="font-bold text-sm">Status</h3>
