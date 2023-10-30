@@ -22,7 +22,7 @@
           <!-- nome + cognome -->
           <h1 class="text-4xl font-bold">{{ client.name }} {{ client.surname }}</h1>
           <ClientsEditClient v-if="isEditMode" :client-id="client.id" class="ml-auto"></ClientsEditClient>
-          <ClientsRemoveClient v-if="isRemoveMode" :client-to-remove="client" class="ml-auto"></ClientsRemoveClient>
+          <ClientsRemoveClient v-if="isRemoveMode" :client-to-remove="client" class="ml-auto" @saved="loadClient()"></ClientsRemoveClient>
         </div>
         <!-- INFO -->
         <SocioInfoSection :client="client"></SocioInfoSection>

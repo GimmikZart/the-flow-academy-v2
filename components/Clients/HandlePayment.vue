@@ -241,7 +241,6 @@ async function getSuggestedPayments(){
 const saveEditedPayment = async function(){
     try {
         let payment_data = paymentStore.payment;
-        console.log({payment_data});
         let { error } = await supabase.rpc('upsert_payment', { payment_data })
         if(error) throw error
         emits("save")

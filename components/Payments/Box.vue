@@ -129,7 +129,6 @@ const isFullPaid = computed(() => {
 
 /* METHODS */
 const setProperties = function(){
-    console.log(props.paymentInfo);
     if(props.paymentInfo.amount == 0 && !isFullPaid.value) {
         cardColor.value = "bg-hard-pink" 
         cardTitle.value = "DA RICEVERE"

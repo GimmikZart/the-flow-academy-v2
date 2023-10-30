@@ -114,7 +114,6 @@ const loadClientsList = async () => {
 }
 
 const addPaymentDialog = function(clientData){
-  console.log({clientData});
   isHandlePaymentDialogVisible.value = true
   clientSelected.value = clientData
   paymentStore.setNewGainFromClient(clientData.id)

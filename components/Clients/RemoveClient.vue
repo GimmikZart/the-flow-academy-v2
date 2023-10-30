@@ -8,7 +8,8 @@
       <h3>Cancellare: elimina totalmente il socio dal database (l'operazione è irrevocabile)</h3>
       <template #footer>
         <Button label="Annulla" @click="removingClientDialog = false" outlined />
-        <Button label="Disiscrivi" severity="warning" @click="unsubscribe()" />
+        <Button v-if="clientToRemove.status != 2" label="Disiscrivi" severity="warning" @click="unsubscribe()" />
+        <Button v-else label="Riattiva" severity="success" @click="reactivate()" />
         <Button label="Cancella" severity="danger" @click="remove()" />
       </template>
     </Dialog>
@@ -59,7 +60,40 @@ async function unsubscribe(){
     removingClientDialog.value = false
     emit('saved')
   } catch (error) {
-    newErrorMessage(`ERRORE NELLA DISISCRIZIONE A DB DI ${editingClientname} : ${error.message}`)
+    newErrorMessage(`ERRORE NELLA DISISCRIZIONE DI ${editingClientname} : ${error.message}`)
+  }
+}
+
+const checkNewStatus = async function(){
+  let newClientStatus = 0;
+  try {
+    let client_id_param = props.clientToRemove.id
+    let { data, error } = await supabase.rpc('get_incomplete_payments', { client_id_param })
+    if(error) throw error
+    if(data.length == 0)
+      newClientStatus = 0
+    else newClientStatus = 1
+  } catch (error) {
+    newErrorMessage(`ERRORE NEL CALCOLO DEL NUOVO STATUS`)
+  }
+  return newClientStatus
+}
+
+const reactivate = async function(){
+  let editingClientname = `${props.clientToRemove.name} ${props.clientToRemove.surname}`
+  
+  let newStatus = await checkNewStatus()
+  try {
+    let { error } = await supabase
+                          .from('clients')
+                          .update({ status: newStatus })
+                          .eq('id', props.clientToRemove.id);
+    if(error) throw error
+    newSuccessMessage(`${editingClientname} è stato correttamente riattivato`);
+    removingClientDialog.value = false
+    emit('saved')
+  } catch (error) {
+    newErrorMessage(`ERRORE NELLA RIATTIVAZIONE DI ${editingClientname} : ${error.message}`)
   }
 }
 

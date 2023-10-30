@@ -1,5 +1,3 @@
-
-import { Script } from 'vm';
 <template>
     <div class="w-100 h-full flex flex-col justify-between py-3">
         <!-- BOX -->
