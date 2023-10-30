@@ -14,6 +14,7 @@ BEGIN
         SET
             amount = (payment_data->>'amount')::smallint,
             amount_required = (payment_data->>'amount_required')::smallint,
+            date = (payment_data->>'date')::date,
             paid_in_date = (payment_data->>'paid_in_date')::date,
             notes = (payment_data->>'notes')::text
         WHERE id = payment_id;
@@ -33,5 +34,6 @@ BEGIN
         );
     END IF;
 END;
+
 
 $$ language plpgsql;

@@ -21,7 +21,7 @@
                         
                     </template>
                     
-                    <template v-if="props.paymentInfo.amount > 0 && getDifferenceOfPaymentEntity(props.paymentInfo) > 0">
+                    <template v-if="props.paymentInfo.amount > 0 && paymentStore.getDifferenceOfPaymentEntity(props.paymentInfo) > 0">
                         <small>Ricevuti</small>
                         <h6 class="font-bold">{{ props.paymentInfo.amount }}</h6>
                     </template>
@@ -38,7 +38,7 @@
             <div class="mx-3">
                 <div v-if="!isFullPaid" class="rounded-lg flex items-center justify-center p-2 cursor-pointer" :class="cardColor" @click="pay()">
                     <span class="w-1/3"></span>
-                    <h3 class="w-1/3 font-bold text-xl text-center text-white">{{paymentStore.getDifferenceOfPaymentEntity(paymentInfo)}} €</h3>
+                    <h3 class="w-1/3 font-bold text-xl text-center text-white">{{paymentStore.getDifferenceOfPaymentEntity(props.paymentInfo)}} €</h3>
                     <Icon name="ph:hand-coins" size="2rem" color="white" class="w-1/3"></Icon>
                 </div>
                 <div v-else class="rounded-lg flex items-center justify-center p-2" :class="cardColor">
@@ -74,7 +74,6 @@ const filtersStore = useFiltersStore()
 const { newSuccessMessage, newErrorMessage } = filtersStore
 /* UTILITY */
 const { reloadApp, formatDateMonthYear,formatDate } = utility()
-const { getDifferenceOfPaymentEntity } = paymentsUtils()
 
 /* EMITS */
 const emits = defineEmits(["edited"])
@@ -107,7 +106,6 @@ const props = defineProps({
 const cardColor = ref("")
 const cardTitle = ref("")
 const paymentValue = ref()
-//const isFullPaid = ref(false)
 const showDialog = ref(false)
 
 /* WATCH */
@@ -132,11 +130,11 @@ const isFullPaid = computed(() => {
 /* METHODS */
 const setProperties = function(){
     console.log(props.paymentInfo);
-    if(!isFullPaid) {
+    if(props.paymentInfo.amount == 0 && !isFullPaid.value) {
         cardColor.value = "bg-hard-pink" 
         cardTitle.value = "DA RICEVERE"
         paymentValue.value = props.paymentInfo.amountRequired
-    } else if(props.paymentInfo.amount < props.paymentInfo.amount_required && !props.paymentInfo.status) {
+    } else if(props.paymentInfo.amount < props.paymentInfo.amount_required && !isFullPaid.value) {
         cardColor.value = "bg-orange"
         cardTitle.value = "RICEVUTO PARZIALE" 
         paymentValue.value = props.paymentInfo.amount_required - props.paymentInfo.amount
@@ -152,6 +150,7 @@ const removeActivity = async function(){
         const { error } = await supabase.from("payments").delete().eq('id', props.paymentInfo.id)
         if(error) throw error
         emits("edited")
+        newSuccessMessage(`Pagamento eliminato con successo`)
     } catch (error) {
         console.log(error);
     }
@@ -170,6 +169,7 @@ const pay = async function(){
         if(error) throw error
         emits("edited")
         paymentStore.resetPayment()
+        newSuccessMessage(`Pagamento andato a buon fine`)
     } catch (error) {
         newErrorMessage(`ERRORE NEL SALVATAGGIO DEL PAGAMENTO: ${error.message}`)
     }

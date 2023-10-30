@@ -59,54 +59,69 @@
         <Column field="action"  header="Azione">
           <template #body="slotProps">
             <Button v-if="actionMode == 4" text>
-              <NuxtLink :to="{ name: 'Socio-id', params: { id: slotProps.data.id } }" class="p-2">
+              <NuxtLink :to="{ name: 'Socio-id', params: { id: slotProps.data.id } }">
                 <Icon name="carbon:user-profile" size="2rem" color="brown"></Icon>
               </NuxtLink>
             </Button>
             
-            <ClientsEditClient v-else-if="actionMode == 1" :clientId="slotProps.data.id" @saved="loadClientsList()"></ClientsEditClient>
+            <ClientsEditClient v-if="actionMode == 1" :clientId="slotProps.data.id" @saved="loadClientsList()"></ClientsEditClient>
             <ClientsRemoveClient v-else-if="actionMode == 2" :clientToRemove="slotProps.data" @saved="loadClientsList()"></ClientsRemoveClient>
-            <ClientsAddNewPayment v-else-if="actionMode == 3 && slotProps.data.status != 2" :editingClient="slotProps.data" @saved="loadClientsList()"></ClientsAddNewPayment>
-            
+            <Button v-else-if="actionMode == 3" text rounded color="green" size="1rem" @click="addPaymentDialog(slotProps.data)">
+              <Icon name="ph:hand-coins" size="2rem" color="green"></Icon>
+            </Button>
             
           </template>
         </Column>
       </DataTable>
     </section>
+    <ClientsHandlePayment v-if="clientSelected" :visible="isHandlePaymentDialogVisible" :client="clientSelected" @close="isHandlePaymentDialogVisible = false" @save="isHandlePaymentDialogVisible = false;loadClientsList()"></ClientsHandlePayment>
   </nuxt-layout>
 </template>
 
 <script setup>
 import { useFiltersStore } from "@/store/pill";
-  import { ref, onBeforeMount  } from 'vue';
-  const supabase = useSupabaseClient()
-  import { FilterMatchMode } from 'primevue/api';
-  const { getInitials, getAge } = utility()
-  /* COMPOSABLES */
-  const filtersStore = useFiltersStore()
-  const { newErrorMessage } = filtersStore
-
-  const clients = ref();
-  const actionMode = ref(4);
-  const clientFilter= ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    surname: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
-  })
-
-  const loadClientsList = async () => {
-    try {
-      let { data, error} = await supabase.from('clients').select('*')
-      if(error) throw error
-      clients.value = data
-    } catch (error) {
-      newErrorMessage(`ERRORE NELL'AQUISIZIONE DI SOCI DAL DB: ${error.message}`)
-    }
-    
+import { ref, onBeforeMount  } from 'vue';
+import { usePaymentStore } from "@/store/payments";
+import { FilterMatchMode } from 'primevue/api';
+/* SUPABASE */
+const supabase = useSupabaseClient()
+/* UTILITY */
+const { getInitials, getAge } = utility()
+/* COMPOSABLES */
+const filtersStore = useFiltersStore()
+const { newErrorMessage } = filtersStore
+/* STORE */
+const paymentStore = usePaymentStore()
+/* DATA */
+const clients = ref();
+const actionMode = ref(4);
+const clientFilter= ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  surname: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
+})
+const isHandlePaymentDialogVisible = ref(false)
+const clientSelected = ref(null)
+/* METHODS */
+const loadClientsList = async () => {
+  try {
+    let { data, error} = await supabase.from('clients').select('*')
+    if(error) throw error
+    clients.value = data
+  } catch (error) {
+    newErrorMessage(`ERRORE NELL'AQUISIZIONE DI SOCI DAL DB: ${error.message}`)
   }
+}
+
+const addPaymentDialog = function(clientData){
+  console.log({clientData});
+  isHandlePaymentDialogVisible.value = true
+  clientSelected.value = clientData
+  paymentStore.setNewGainFromClient(clientData.id)
+}
 
 /* HOOKS */ 
-  onBeforeMount(async () => {
-    loadClientsList()
-  })    
+onBeforeMount(async () => {
+  loadClientsList()
+})    
 </script>

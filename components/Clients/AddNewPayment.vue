@@ -95,7 +95,6 @@ const selectedPayment = ref()
 watch(selectedPayment, async (newSelectedPayment) => {
   if (newSelectedPayment && newSelectedPayment.id != null) {
     newPayment.value.id = newSelectedPayment.id
-    //newPayment.value.amount = getDifferenceOfPaymentEntity(newSelectedPayment);
     newPayment.value.client_id = newSelectedPayment.client_id
     newPayment.value.notes = newSelectedPayment.notes
   }

@@ -31,7 +31,7 @@
             </span>
 
             <span class="p-float-label col-start-1 col-end-3">
-                <Dropdown v-model="selectedActivity" :disabled="editMode" showClear :options="activitiesList" class="w-full">
+                <Dropdown v-model="selectedActivity" :disabled="editMode" :showClear="!editMode" :options="activitiesList" class="w-full">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <h5>{{ slotProps.value.instances.name }} | {{ slotProps.value.instances.level }}</h5>
@@ -47,7 +47,7 @@
             </span>
 
             <span class="flex items-center col-start-3 col-end-4">
-                <Checkbox v-model="otherActivity" :binary="true" />
+                <Checkbox v-model="otherActivity" :disabled="editMode" :binary="true" />
                 <label for="ingredient1" class="ml-2 text-h2"> Altro </label>
             </span>
 
@@ -234,7 +234,7 @@ async function getSuggestedPayments(){
         if(error) throw error
         suggestedPayments.value = data
     } catch (error) {
-            newErrorMessage(`ERRORE NELL'AQUISIZIONE DEI PAGAMENTI SUGGERITI DAL DB: ${error.message}`)
+        newErrorMessage(`ERRORE NELL'AQUISIZIONE DEI PAGAMENTI SUGGERITI DAL DB: ${error.message}`)
     }
 }
 
@@ -246,6 +246,8 @@ const saveEditedPayment = async function(){
         if(error) throw error
         emits("save")
         paymentStore.resetPayment()
+        getLists()
+        newSuccessMessage(`Pagamento andato a buon fine`)
     } catch (error) {
         newErrorMessage(`ERRORE NEL SALVATAGGIO DEL PAGAMENTO: ${error.message}`)
     }
@@ -272,7 +274,11 @@ const closeDialog = function(){
     paymentStore.resetPayment()
     emits('close')
 }
+
+const getLists = async function(){
+    await getSuggestedPayments()
+    await getActivitiesList()
+}
 /* ON CREATE */
-getSuggestedPayments()
-getActivitiesList()
+getLists()
 </script>
