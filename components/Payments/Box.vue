@@ -14,8 +14,11 @@
                             <span class="italic">({{ props.paymentInfo.instances.level }})</span>
                         </div>
                         
-                        <small>Per il mese di</small>
-                        <h6 class="font-bold">{{ formatDateMonthYear(props.paymentInfo.date) }}</h6>
+                        <template v-if="props.paymentInfo.date">
+                            <small>Per il mese di</small>
+                            <h6 class="font-bold">{{ formatDateMonthYear(props.paymentInfo.date) }}</h6>
+                        </template>
+                        
                     </template>
                     
                     <template v-if="props.paymentInfo.amount > 0 && getDifferenceOfPaymentEntity(props.paymentInfo) > 0">
@@ -33,10 +36,10 @@
                 </div>
             </div>
             <div class="mx-3">
-                <div v-if="!isFullPaid" class="rounded-lg flex items-center justify-center p-2" :class="cardColor">
+                <div v-if="!isFullPaid" class="rounded-lg flex items-center justify-center p-2 cursor-pointer" :class="cardColor" @click="pay()">
                     <span class="w-1/3"></span>
-                    <h3 class="w-1/3 font-bold text-xl text-center text-white">{{paymentInfo.amount}} €</h3>
-                    <Icon name="mdi:check-bold" size="2rem" color="green" class="w-1/3"></Icon>
+                    <h3 class="w-1/3 font-bold text-xl text-center text-white">{{paymentStore.getDifferenceOfPaymentEntity(paymentInfo)}} €</h3>
+                    <Icon name="ph:hand-coins" size="2rem" color="white" class="w-1/3"></Icon>
                 </div>
                 <div v-else class="rounded-lg flex items-center justify-center p-2" :class="cardColor">
                     <span class="w-1/3"></span>
@@ -61,11 +64,14 @@
     <ClientsHandlePayment :visible="showDialog" :client="clientInfo" :instance="paymentInfo.instances" edit-mode @close="showDialog = false" @save="showDialog = false;emits('edited')"></ClientsHandlePayment>
 </template>
 <script setup>
+import { useFiltersStore } from "@/store/pill";
 import { ref, computed, watch } from "vue"
 import { usePaymentStore } from "@/store/payments";
 /* SUPABASE */
 const supabase = useSupabaseClient()
-
+/* RESPONSE */
+const filtersStore = useFiltersStore()
+const { newSuccessMessage, newErrorMessage } = filtersStore
 /* UTILITY */
 const { reloadApp, formatDateMonthYear,formatDate } = utility()
 const { getDifferenceOfPaymentEntity } = paymentsUtils()
@@ -101,7 +107,7 @@ const props = defineProps({
 const cardColor = ref("")
 const cardTitle = ref("")
 const paymentValue = ref()
-const isFullPaid = ref(false)
+//const isFullPaid = ref(false)
 const showDialog = ref(false)
 
 /* WATCH */
@@ -119,21 +125,25 @@ const getComputedClass = computed(() => {
     return classes
 })
 
+const isFullPaid = computed(() => {
+    return props.paymentInfo.status
+})
+
 /* METHODS */
 const setProperties = function(){
-    if(props.paymentInfo.amount == 0 && !props.paymentInfo.status) {
+    console.log(props.paymentInfo);
+    if(!isFullPaid) {
         cardColor.value = "bg-hard-pink" 
         cardTitle.value = "DA RICEVERE"
         paymentValue.value = props.paymentInfo.amountRequired
     } else if(props.paymentInfo.amount < props.paymentInfo.amount_required && !props.paymentInfo.status) {
         cardColor.value = "bg-orange"
         cardTitle.value = "RICEVUTO PARZIALE" 
-        paymentValue.value = props.paymentInfo.amountRequired - props.paymentInfo.amount
+        paymentValue.value = props.paymentInfo.amount_required - props.paymentInfo.amount
     } else {
         cardColor.value = "bg-green"
         cardTitle.value = "RICEVUTO"
-        paymentValue.value = props.paymentInfo.amountRequired
-        isFullPaid.value = true
+        paymentValue.value = props.paymentInfo.amount_required
     }
 }
 
@@ -141,7 +151,7 @@ const removeActivity = async function(){
     try {
         const { error } = await supabase.from("payments").delete().eq('id', props.paymentInfo.id)
         if(error) throw error
-        reloadApp()
+        emits("edited")
     } catch (error) {
         console.log(error);
     }
@@ -150,6 +160,19 @@ const removeActivity = async function(){
 const editPayment = function(){
     showDialog.value = true; 
     paymentStore.setNewGainFromClient(props.clientInfo.id, props.paymentInfo)
+}
+
+const pay = async function(){
+    try {
+        paymentStore.clientInstaPay(props.clientInfo.id, props.paymentInfo)
+        let payment_data = paymentStore.payment;
+        let { error } = await supabase.rpc('upsert_payment', { payment_data })
+        if(error) throw error
+        emits("edited")
+        paymentStore.resetPayment()
+    } catch (error) {
+        newErrorMessage(`ERRORE NEL SALVATAGGIO DEL PAGAMENTO: ${error.message}`)
+    }
 }
 
 /* ON CREATE */

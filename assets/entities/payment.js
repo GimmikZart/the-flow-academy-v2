@@ -64,7 +64,6 @@ export default class Payment {
   toClient(clientId){
     this.type = 0
     this.client_id = clientId
-    console.log(this);
     return this;
   }
 

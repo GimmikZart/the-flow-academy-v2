@@ -118,7 +118,6 @@
   const isRemoveMode = computed(() => actionMode.value == 2);
   /* METHODS */
   const loadClient = async () => {
-    console.log('LOOOAD CLIEEENT');
     client.value = await getClient()
     activitiesList.value = await getInstances()
     paymentsList.value = await getPayments()
@@ -126,7 +125,6 @@
 
   const getClient = async () => {
     try {
-      console.log('route.params.id',route.params.id);
       let { data, error } = await supabase
         .from('clients')
         .select('*')
@@ -143,8 +141,9 @@
     try {
       let { data, error } = await supabase
         .from('payments')
-        .select('*, instances(name, level)')
-        .eq('client_id', route.params.id);
+        .select('*, instances(name, level, id)')
+        .eq('client_id', route.params.id)
+        .order('id', { ascending: false });
       if(error) throw error
       return data
     } catch (error) {
@@ -154,7 +153,6 @@
 
   const getInstances = async () => {
     try {
-      console.log(route.params.id);
       let { data, error } = await supabase
         .from('client_instance')
         .select('*, instances ( name, level )')
@@ -171,7 +169,6 @@
       let { data, error } = await supabase
         .from('instances')
         .select('id, name, level')
-        console.log({data});
       if(error) throw error
       allActivities.value = data
     } catch (error) {
@@ -181,9 +178,7 @@
   }
 
   const addActivity = async () => {
-    console.log('ADD ACTIVITY');
-    let newActivity = new ClientInstance(client.value.id, selectedNewActivity.value.id)
-    console.log({newActivity});    
+    let newActivity = new ClientInstance(client.value.id, selectedNewActivity.value.id) 
     try {
       let { error } = await supabase
         .from('client_instance')
@@ -199,14 +194,11 @@
   }
 
   const addPayment = async () => {
-    console.log('CLIIIIICK');
     handlePaymentDialog.value = true;
     paymentStore.setNewGainFromClient(parseInt(route.params.id))
-    console.log('EH BHE?');
   }
 
   const savePayment = async function(){
-    console.log('SAAAVE');
     handlePaymentDialog.value = false; 
     await loadClient()
   }

@@ -13,28 +13,33 @@ export const usePaymentStore = defineStore('payments', () => {
         payment.value.date = paymentInfos.date
         payment.value.amount_required = paymentInfos.amount_required
         payment.value.date = paymentInfos.date
-        payment.value.paid_in_date = paymentInfos.paid_in_date
+        payment.value.paid_in_date = paymentInfos.paid_in_date ? paymentInfos.paid_in_date : new Date()
         payment.value.status = paymentInfos.status
     }
     const setNewGainFromClient = function(clientId, paymentInfo){
-        console.log('SET CLIENT ID', clientId);
+        resetPayment()
         if(paymentInfo) setPayment(paymentInfo)
         payment.value.client_id = clientId
         payment.value.type = 1
-        console.log({payment});
     }
 
-    const setNewCostFromClient = function(clientId){
+    const setNewCostFromClient = function(clientId, paymentInfo){
+        resetPayment()
+        if(paymentInfo) setPayment(paymentInfo)
         payment.client_id = clientId
         payment.type = 0
     }
 
-    const setNewGainFromCollaborator = function(collaboratorId){
+    const setNewGainFromCollaborator = function(collaboratorId, paymentInfo){
+        resetPayment()
+        if(paymentInfo) setPayment(paymentInfo)
         payment.collaboratorId = collaboratorId
         payment.type = 1
     }
 
-    const setNewCostFromCollaborator = function(collaboratorId){
+    const setNewCostFromCollaborator = function(collaboratorId,paymentInfo){
+        resetPayment()
+        if(paymentInfo) setPayment(paymentInfo)
         payment.collaboratorId = collaboratorId
         payment.type = 0
     }
@@ -47,6 +52,12 @@ export const usePaymentStore = defineStore('payments', () => {
         return paymentInfo.amount_required - paymentInfo.amount
     }
 
+    const clientInstaPay = function(clientId, paymentInfo){
+        setNewGainFromClient(clientId, paymentInfo)
+        payment.value.amount = paymentInfo.amount_required
+        payment.value.date = new Date()
+    }
+
     return {
         payment,
         setPayment,
@@ -55,6 +66,7 @@ export const usePaymentStore = defineStore('payments', () => {
         setNewGainFromCollaborator,
         setNewCostFromCollaborator,
         resetPayment,
-        getDifferenceOfPaymentEntity
+        getDifferenceOfPaymentEntity,
+        clientInstaPay
     }
 })

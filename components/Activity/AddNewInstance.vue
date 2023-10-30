@@ -113,7 +113,6 @@ async function getActivities(){
   try {
     let { data, error} = await supabase.from('activities').select('id, name')
     if(error) throw error;
-    console.log({data});
     activitiesList.value = data;
   } catch (error) {
     newErrorMessage(`ERRORE NELLO SCARICAMENTO DEI COLLABORATORI`)

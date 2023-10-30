@@ -6,10 +6,10 @@
         :style="{ width: '50vw' }"
     >
         <div class="grid grid-rows-4 grid-cols-3 gap-10 p-10">
-            <span v-if="editMode" class="p-float-label col-start-1 col-end-3">
+            <!-- <span v-if="editMode" class="p-float-label col-start-1 col-end-3">
                 <InputText v-model="instanceInfo" disabled class="w-full"/>
                 <label>Per la seguente attività</label>
-            </span>
+            </span> -->
             
             <span v-if="!editMode && suggestedPayments.length > 0" class="p-float-label col-start-1 col-end-4">
                 <Dropdown v-model="selectedPayment" showClear :options="suggestedPayments" class="w-full">
@@ -30,8 +30,8 @@
                 <label>Pagamenti suggeriti</label>
             </span>
 
-            <span v-if="!editMode" class="p-float-label col-start-1 col-end-4">
-                <Dropdown v-model="selectedActivity" showClear :options="activitiesList" class="w-full">
+            <span class="p-float-label col-start-1 col-end-3">
+                <Dropdown v-model="selectedActivity" :disabled="editMode" showClear :options="activitiesList" class="w-full">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <h5>{{ slotProps.value.instances.name }} | {{ slotProps.value.instances.level }}</h5>
@@ -44,6 +44,11 @@
                     </template>
                 </Dropdown>
                 <label>Lista Attività</label>
+            </span>
+
+            <span class="flex items-center col-start-3 col-end-4">
+                <Checkbox v-model="otherActivity" :binary="true" />
+                <label for="ingredient1" class="ml-2 text-h2"> Altro </label>
             </span>
 
             <span class="p-float-label col-start-1 col-end-1">
@@ -74,7 +79,7 @@
                 <Calendar
                     v-model="paymentStore.payment.date"
                     placeholder="Mese di riferimento"
-                    dateFormat="mm/yy"
+                    dateFormat="dd/mm/yy"
                     class="w-full"
                 />
                 <label>Relativo al mese di</label>
@@ -88,7 +93,6 @@
                     locale="it-IT"
                     placeholder="Un ammontare di"
                     :minFractionDigits="2"
-                    dateFormat="dd/mm/yy"
                     class="w-full"
                 />
                 <label>Su un totale dovuto di</label>
@@ -105,7 +109,7 @@
             </span>
         </div>
         <template #footer>
-            <Button label="Chiudi" @click="emits('close')" outlined />
+            <Button label="Chiudi" @click="closeDialog()" outlined />
             <Button
                 label="Salva"
                 severity="success"
@@ -158,7 +162,7 @@ const suggestedPayments = ref([])
 const selectedPayment = ref()
 const selectedActivity = ref()
 const activitiesList= ref()
-
+const otherActivity = ref(false)
 /* EMITS */
 const emits = defineEmits(["close", "save"])
 
@@ -177,14 +181,28 @@ watch(() => paymentStore.payment.amount, (newValue) => {
     else paymentStore.payment.status = true
 })
 
-watch(() => paymentStore.payment.status, (newStatus) => {
-    if(newStatus) paymentStore.payment.amount_required = paymentStore.payment.amount
+watch(() => paymentStore.payment.amount_required, (newValue) => {
+    if(newValue <= paymentStore.payment.amount) paymentStore.payment.status = true
+    else paymentStore.payment.status = false
 })
+
+watch(() => paymentStore.payment.status, (newStatus) => {
+    if(newStatus) paymentStore.payment.amount = paymentStore.payment.amount_required
+    if(!newStatus) paymentStore.payment.amount == paymentStore.payment.amount_required ? paymentStore.payment.status = true : paymentStore.payment.status = false
+})
+
+watch(() => props.instance, () => {
+        autoSetActivity()
+    },
+    { 
+        deep: true
+    }
+)
 
 watch(() => selectedPayment.value, (newValue) => {
     if(newValue != null){
         selectedActivity.value = null
-        console.log({newValue});
+        paymentStore.setNewGainFromClient(props.client.id, newValue)
         paymentStore.payment.amount = newValue.amount_required
         paymentStore.payment.amount_required = newValue.amount_required
         paymentStore.payment.id = newValue.id
@@ -192,12 +210,20 @@ watch(() => selectedPayment.value, (newValue) => {
 })
 watch(() => selectedActivity.value, (newValue) => {
     if(newValue != null){
-        console.log({newValue});
         selectedPayment.value = null
+        otherActivity.value = false
+        paymentStore.setNewGainFromClient(props.client.id)
         paymentStore.payment.amount = newValue.instances.cost
         paymentStore.payment.amount_required = newValue.instances.cost
         paymentStore.payment.instance_id = newValue.instances.id
+        paymentStore.payment.date = null
+    } else {
+        otherActivity.value = true
     }
+}, {immediate: true})
+
+watch(() => otherActivity.value, (newValue) => {
+    if(newValue) selectedActivity.value = null
 })
 
 /* METHODS */
@@ -207,7 +233,6 @@ async function getSuggestedPayments(){
         let { data, error } = await supabase.rpc('get_incomplete_payments', { client_id_param })
         if(error) throw error
         suggestedPayments.value = data
-        if(suggestedPayments.value.length > 0) selectedPayment.value = suggestedPayments.value[0] // auto seleziona il primo risultato se presente
     } catch (error) {
             newErrorMessage(`ERRORE NELL'AQUISIZIONE DEI PAGAMENTI SUGGERITI DAL DB: ${error.message}`)
     }
@@ -219,10 +244,8 @@ const saveEditedPayment = async function(){
         console.log({payment_data});
         let { error } = await supabase.rpc('upsert_payment', { payment_data })
         if(error) throw error
-        console.log('ora emit');
         emits("save")
-        console.log({emits});
-        console.log('EMIT AVVENUTO?');
+        paymentStore.resetPayment()
     } catch (error) {
         newErrorMessage(`ERRORE NEL SALVATAGGIO DEL PAGAMENTO: ${error.message}`)
     }
@@ -233,9 +256,21 @@ const getActivitiesList = async function(){
         const { data, error } = await supabase.from("client_instance").select("instances(id, name, level, cost)").eq("client_id", props.client.id)
         if (error) throw error
         activitiesList.value = data
+        autoSetActivity()
     } catch (error) {
         newErrorMessage(`ERRORE NELL'AQUISIZIONE DELLE ATTIVITA' LEGATE AL CLIENTE: ${error.message}`)
     }
+}
+
+const autoSetActivity = function(){
+    if(props.instance != null) selectedActivity.value = activitiesList.value.find((act) => {
+        return act.instances.id == props.instance.id
+    }) 
+}
+
+const closeDialog = function(){
+    paymentStore.resetPayment()
+    emits('close')
 }
 /* ON CREATE */
 getSuggestedPayments()

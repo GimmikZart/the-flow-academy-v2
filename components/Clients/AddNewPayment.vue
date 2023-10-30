@@ -130,7 +130,6 @@ async function getSuggestedPayments(){
     )
     selectedPayment.value = suggestedPayments.value[0] // auto seleziona il primo risultato se presente
   } catch (error) {
-    console.log(error.message);
     newErrorMessage(`ERRORE NELL'AQUISIZIONE DEI PAGAMENTI SUGGERITI DAL DB: ${error.message}`)
   }
 }
