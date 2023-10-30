@@ -4,11 +4,22 @@ import Payment from "@/assets/entities/payment"
 
 export const usePaymentStore = defineStore('payments', () => {
     const payment = ref(new Payment().toPlainObject())
+    const paymentTypes = ref([
+        {
+            value: 0,
+            label: "Entrata"
+        },
+        {
+            value: 1,
+            label: "Uscita"
+        }
+    ])
 
     const setPayment = function(paymentInfos){
         payment.value.id = paymentInfos.id
         payment.value.notes = paymentInfos.notes
         payment.value.amount = paymentInfos.amount
+        payment.value.type = paymentInfos.type
         payment.value.instance_id = paymentInfos.instance_id
         payment.value.date = paymentInfos.date
         payment.value.amount_required = paymentInfos.amount_required
@@ -60,6 +71,7 @@ export const usePaymentStore = defineStore('payments', () => {
 
     return {
         payment,
+        paymentTypes,
         setPayment,
         setNewGainFromClient,
         setNewCostFromClient,

@@ -6,7 +6,10 @@
         :style="{ width: '50vw' }"
     >
         <div class="grid grid-rows-4 grid-cols-3 gap-10 p-10">
-            <SelectButton v-model="paymentStore.payment.type" :options="paymentStore.paymentTypes" optionLabel="label" optionValue="value" aria-labelledby="basic" :allowEmpty="false" class="w-100 " />
+            <!-- <span v-if="editMode" class="p-float-label col-start-1 col-end-3">
+                <InputText v-model="instanceInfo" disabled class="w-full"/>
+                <label>Per la seguente attività</label>
+            </span> -->
             
             <span v-if="!editMode && suggestedPayments.length > 0" class="p-float-label col-start-1 col-end-4">
                 <Dropdown v-model="selectedPayment" showClear :options="suggestedPayments" class="w-full">
@@ -186,10 +189,6 @@ watch(() => paymentStore.payment.amount_required, (newValue) => {
 watch(() => paymentStore.payment.status, (newStatus) => {
     if(newStatus) paymentStore.payment.amount = paymentStore.payment.amount_required
     if(!newStatus) paymentStore.payment.amount == paymentStore.payment.amount_required ? paymentStore.payment.status = true : paymentStore.payment.status = false
-})
-
-watch(() => paymentStore.payment.type, (newType) => {
-    if(newType == null) paymentStore.payment.type = 0
 })
 
 watch(() => props.instance, () => {
