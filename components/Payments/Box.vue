@@ -33,7 +33,11 @@
                 </div>
             </div>
             <div class="mx-3">
-                <ClientsAddNewPayment v-if="!isFullPaid" :editingClient="clientInfo" :directPayment="paymentInfo" @saved="reloadApp()"></ClientsAddNewPayment>
+                <div v-if="!isFullPaid" class="rounded-lg flex items-center justify-center p-2" :class="cardColor">
+                    <span class="w-1/3"></span>
+                    <h3 class="w-1/3 font-bold text-xl text-center text-white">{{paymentInfo.amount}} €</h3>
+                    <Icon name="mdi:check-bold" size="2rem" color="green" class="w-1/3"></Icon>
+                </div>
                 <div v-else class="rounded-lg flex items-center justify-center p-2" :class="cardColor">
                     <span class="w-1/3"></span>
                     <h3 class="w-1/3 font-bold text-xl text-center text-white">{{paymentInfo.amount}} €</h3>
