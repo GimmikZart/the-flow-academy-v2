@@ -41,7 +41,7 @@
                 </div>
             </div>
         </div>
-        <Button v-if="editMode" rounded severity="warning" class="absolute bottom-3 absolute-center-y bg-white" @click="showDialog = true">
+        <Button v-if="editMode" rounded severity="warning" class="absolute bottom-3 absolute-center-y bg-white" @click="editPayment()">
             <template #icon>
                 <Icon name="material-symbols:edit" color="white" size="30"></Icon>
             </template>
@@ -52,79 +52,103 @@
             </template>
         </Button>
     </div>
-    <ClientsHandlePayment :visible="showDialog" :client="clientInfo" :edit-payment="paymentInfo" @close="showDialog = false"></ClientsHandlePayment>
+
+
+    <ClientsHandlePayment :visible="showDialog" :client="clientInfo" :instance="paymentInfo.instances" edit-mode @close="showDialog = false" @save="showDialog = false;emits('edited')"></ClientsHandlePayment>
 </template>
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
+import { usePaymentStore } from "@/store/payments";
 /* SUPABASE */
 const supabase = useSupabaseClient()
+
+/* UTILITY */
 const { reloadApp, formatDateMonthYear,formatDate } = utility()
 const { getDifferenceOfPaymentEntity } = paymentsUtils()
-    /* PROPS */
-    const props = defineProps({
-        paymentInfo: {
-            type: Object,
-            required: true
-        },
-        clientInfo: {
-            type: Object,
-            required: true
-        },
-        editMode: {
-            type: Boolean,
-            required: false,
-            default: false
-        },
-        removeMode: {
-            type: Boolean,
-            required: false,
-            default: false
-        }
-    })
 
-    /* DATA */
-    const cardColor = ref("")
-    const cardTitle = ref("")
-    const paymentValue = ref()
-    const isFullPaid = ref(false)
-    const showDialog = ref(false)
+/* EMITS */
+const emits = defineEmits(["edited"])
 
-    /* COMPUTED */
-    const getComputedClass = computed(() => {
-        let classes = ""
-        if(props.editMode) classes += "flickering border-2 border-warning"
-        if(props.removeMode) classes += "flickering border-2 border-danger"
-        return classes
-    })
-
-    const setProperties = function(){
-        if(props.paymentInfo.amount == 0 && !props.paymentInfo.status) {
-            cardColor.value = "bg-hard-pink" 
-            cardTitle.value = "DA RICEVERE"
-            paymentValue.value = props.paymentInfo.amountRequired
-        } else if(props.paymentInfo.amount < props.paymentInfo.amount_required && !props.paymentInfo.status) {
-            cardColor.value = "bg-orange"
-            cardTitle.value = "RICEVUTO PARZIALE" 
-            paymentValue.value = props.paymentInfo.amountRequired - props.paymentInfo.amount
-        } else {
-            cardColor.value = "bg-green"
-            cardTitle.value = "RICEVUTO"
-            paymentValue.value = props.paymentInfo.amountRequired
-            isFullPaid.value = true
-        }
+/* STORES */
+const paymentStore = usePaymentStore()
+/* PROPS */
+const props = defineProps({
+    paymentInfo: {
+        type: Object,
+        required: true
+    },
+    clientInfo: {
+        type: Object,
+        required: true
+    },
+    editMode: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    removeMode: {
+        type: Boolean,
+        required: false,
+        default: false
     }
+})
 
-    const removeActivity = async function(){
-        try {
-            const { error } = await supabase.from("payments").delete().eq('id', props.paymentInfo.id)
-            if(error) throw error
-            reloadApp()
-        } catch (error) {
-            console.log(error);
-        }
-    }
+/* DATA */
+const cardColor = ref("")
+const cardTitle = ref("")
+const paymentValue = ref()
+const isFullPaid = ref(false)
+const showDialog = ref(false)
 
-    /* ON CREATE */
+/* WATCH */
+watch(() => props.paymentInfo, () =>{
     setProperties()
+},
+{ deep: true }
+)
+
+/* COMPUTED */
+const getComputedClass = computed(() => {
+    let classes = ""
+    if(props.editMode) classes += "flickering border-2 border-warning"
+    if(props.removeMode) classes += "flickering border-2 border-danger"
+    return classes
+})
+
+/* METHODS */
+const setProperties = function(){
+    if(props.paymentInfo.amount == 0 && !props.paymentInfo.status) {
+        cardColor.value = "bg-hard-pink" 
+        cardTitle.value = "DA RICEVERE"
+        paymentValue.value = props.paymentInfo.amountRequired
+    } else if(props.paymentInfo.amount < props.paymentInfo.amount_required && !props.paymentInfo.status) {
+        cardColor.value = "bg-orange"
+        cardTitle.value = "RICEVUTO PARZIALE" 
+        paymentValue.value = props.paymentInfo.amountRequired - props.paymentInfo.amount
+    } else {
+        cardColor.value = "bg-green"
+        cardTitle.value = "RICEVUTO"
+        paymentValue.value = props.paymentInfo.amountRequired
+        isFullPaid.value = true
+    }
+}
+
+const removeActivity = async function(){
+    try {
+        const { error } = await supabase.from("payments").delete().eq('id', props.paymentInfo.id)
+        if(error) throw error
+        reloadApp()
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const editPayment = function(){
+    showDialog.value = true; 
+    paymentStore.setNewGainFromClient(props.clientInfo.id, props.paymentInfo)
+}
+
+/* ON CREATE */
+setProperties()
 
 </script>

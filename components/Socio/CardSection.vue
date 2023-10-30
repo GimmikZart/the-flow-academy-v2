@@ -4,7 +4,7 @@
             <h1 class="text-center font-bold text-2xl ml-auto mr-auto">{{cardName}}</h1>
             <slot name="button"></slot>
         </div>
-        <div class="h-full py-5 flex gap-3">
+        <div class="h-full py-10 px-3 flex gap-3 overflow-x-auto overflow-y-hidden">
             <slot name="cards"></slot>
         </div>
     </div>

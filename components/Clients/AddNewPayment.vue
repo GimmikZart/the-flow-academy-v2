@@ -2,7 +2,7 @@
   <div>
     <div v-if="directPayment" class="rounded-lg p-2 flex items-center justify-between bg-hard-pink cursor-pointer" :class="directPayment.amount == 0? 'bg-hard-pink' : 'bg-orange'" @click="addPaymentDialog = true">
       <span class="w-1/3"></span>
-      <h3 class="font-bold text-xl text-center text-white w-1/3">{{getDifferenceOfPaymentEntity(directPayment)}}</h3>
+      <!-- <h3 class="font-bold text-xl text-center text-white w-1/3">{{getDifferenceOfPaymentEntity(directPayment)}}</h3> -->
       <Icon class="w-1/3" name="ph:hand-coins" size="2rem" color="white"></Icon>
     </div>
     <Button v-else text rounded color="green" size="1rem" @click="addPaymentDialog = true">
@@ -22,7 +22,7 @@
               <div class="flex flex-col align-items-center">
                 <h5 class="font-bold">{{ slotProps.option.instance_name }}</h5>
                 <h5 v-if="slotProps.option.date">{{ formatDate(slotProps.option.date) }}</h5>
-                <h6 v-if="slotProps.option.amount_required">da pagare: {{ getDifferenceOfPaymentEntity(slotProps.option) }}</h6>
+                <!-- <h6 v-if="slotProps.option.amount_required">da pagare: {{ getDifferenceOfPaymentEntity(slotProps.option) }}</h6> -->
               </div>
             </template>
           </Dropdown>
@@ -37,6 +37,11 @@
         <span class="p-float-label col-start-2 col-end-3">
           <Calendar v-model="newPayment.paid_in_date" placeholder="Data Pagamento" dateFormat="dd/mm/yy" class="w-full"/>
           <label>In data</label>
+        </span>
+
+        <span class="p-float-label col-start-2 col-end-3">
+          <Calendar v-model="newPayment.paid_in_date" placeholder="Data Pagamento" dateFormat="dd/mm/yy" class="w-full"/>
+          <label>Per il periodo</label>
         </span>
 
         <span class="p-float-label col-start-1 col-end-3">
@@ -58,7 +63,7 @@ import { useFiltersStore } from "@/store/pill";
 import Payment from '@/assets/entities/payment.js';
 import { useDateFormat } from '@vueuse/core'
 import { watch, ref } from 'vue'
-const { getDifferenceOfPaymentEntity } = paymentsUtils()
+//const { getDifferenceOfPaymentEntity } = paymentsUtils()
 
 /* PROPS */
 const props = defineProps({
@@ -90,7 +95,7 @@ const selectedPayment = ref()
 watch(selectedPayment, async (newSelectedPayment) => {
   if (newSelectedPayment && newSelectedPayment.id != null) {
     newPayment.value.id = newSelectedPayment.id
-    newPayment.value.amount = getDifferenceOfPaymentEntity(newSelectedPayment);
+    //newPayment.value.amount = getDifferenceOfPaymentEntity(newSelectedPayment);
     newPayment.value.client_id = newSelectedPayment.client_id
     newPayment.value.notes = newSelectedPayment.notes
   }

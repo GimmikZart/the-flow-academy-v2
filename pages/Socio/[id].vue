@@ -45,16 +45,22 @@
         <!-- PAYMENTS -->
         <SocioCardSection card-name="Pagamenti" class="h-3/5">
           <template #button>
-            <ClientsAddNewPayment :editing-client="client" @saved="reloadApp()"></ClientsAddNewPayment>
+            <Button text @click="addPayment()">
+                <template #icon>
+                  <Icon name="zondicons:add-outline" color="green" size="30"></Icon>
+                </template>
+            </Button>
           </template>
           <template #cards>
-            <PaymentsBox v-for="(payment, idx) in paymentsList" :key="idx" :paymentInfo="payment" :clientInfo="client" :edit-mode="isEditMode" :remove-mode="isRemoveMode"></PaymentsBox>
+            <PaymentsBox v-for="(payment, idx) in paymentsList" :key="idx" :paymentInfo="payment" :clientInfo="client" :edit-mode="isEditMode" :remove-mode="isRemoveMode" @edited="loadClient()"></PaymentsBox>
           </template>
         </SocioCardSection>
       </div>>
     </section>
 
     <!-- DIALOGS -->
+    <ClientsHandlePayment v-if="client" :client="client" :visible="handlePaymentDialog" @save="savePayment()" @close="handlePaymentDialog = false"></ClientsHandlePayment>
+
     <Dialog :visible="addActivityDialog" modal header="Iscrivi ad attività" :style="{ minWidth: '20vw' }">
       <Dropdown class="w-full" v-model="selectedNewActivity" :options="allActivities">
         <template #value="slotProps">
@@ -84,6 +90,7 @@
   import { useFiltersStore } from "@/store/pill";
   import { ref, onBeforeMount, computed  } from 'vue';
   import ClientInstance from "@/assets/entities/clientInstance"
+  import { usePaymentStore } from "@/store/payments";
   const supabase = useSupabaseClient()
   const { getInitials, getAge, reloadApp } = utility()
   /* COMPOSABLES */
@@ -92,6 +99,8 @@
   const { newSuccessMessage, newErrorMessage } = filtersStore
   /* PROPS */
   const props = defineProps(['clientId'])
+  /* STORES */
+  const paymentStore = usePaymentStore()
 
   /* DATA */
   const client = ref();
@@ -101,6 +110,7 @@
   const addActivityDialog = ref(false)
   const allActivities = ref([])
   const selectedNewActivity = ref()
+  const handlePaymentDialog = ref(false)
 
   /* COMPUTED */
   const isVisitMode = computed(() => actionMode.value == 4);
@@ -108,6 +118,7 @@
   const isRemoveMode = computed(() => actionMode.value == 2);
   /* METHODS */
   const loadClient = async () => {
+    console.log('LOOOAD CLIEEENT');
     client.value = await getClient()
     activitiesList.value = await getInstances()
     paymentsList.value = await getPayments()
@@ -115,6 +126,7 @@
 
   const getClient = async () => {
     try {
+      console.log('route.params.id',route.params.id);
       let { data, error } = await supabase
         .from('clients')
         .select('*')
@@ -187,7 +199,16 @@
   }
 
   const addPayment = async () => {
-    console.log('ADD PAYMENT');
+    console.log('CLIIIIICK');
+    handlePaymentDialog.value = true;
+    paymentStore.setNewGainFromClient(parseInt(route.params.id))
+    console.log('EH BHE?');
+  }
+
+  const savePayment = async function(){
+    console.log('SAAAVE');
+    handlePaymentDialog.value = false; 
+    await loadClient()
   }
 
 /* HOOKS */ 

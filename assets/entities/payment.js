@@ -7,15 +7,17 @@ export default class Payment {
                 type = 1,
                 notes = '', 
                 amount = 0,
+                date = null,
                 amount_required = 0,
-                paid_in_date = new Date(),
+                paid_in_date = null,
                 status = false) {
     this.id = id,
     this.type = type, 
     this.notes = notes 
     this.amount = amount,
-    this.amount_required = 0,
-    this.paid_in_date = paid_in_date, 
+    this.amount_required = amount_required,
+    this.date = date
+    this.paid_in_date = paid_in_date ? paid_in_date : new Date(), 
     this.client_id = client_id,
     this.collaborator_id = collaborator_id,
     this.instance_id = instance_id,
@@ -30,6 +32,7 @@ export default class Payment {
       notes: this.notes, 
       amount: this.amount,
       amount_required: this.amount_required,
+      date: this.date,
       paid_in_date:this.paid_in_date, 
       client_id: this.client_id,
       collaborator_id: this.collaborator_id,
@@ -45,6 +48,7 @@ export default class Payment {
     this.notes = '' 
     this.amount = 0,
     this.amount_required = 0,
+    this.date = null,
     this.paid_in_date = new Date(), 
     this.client_id = null,
     this.collaborator_id = null,

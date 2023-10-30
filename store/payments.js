@@ -1,51 +1,50 @@
 import { defineStore } from 'pinia'
 import { ref } from "vue"
 import Payment from "@/assets/entities/payment"
-import { useFiltersStore } from "@/store/pill";
-/* SUPABASE */
-const supabase = useSupabaseClient()
 
-export const useFiltersStore = defineStore('payments', () => {
-    const payment = ref(new Payment())
+export const usePaymentStore = defineStore('payments', () => {
+    const payment = ref(new Payment().toPlainObject())
 
     const setPayment = function(paymentInfos){
         payment.value.id = paymentInfos.id
         payment.value.notes = paymentInfos.notes
         payment.value.amount = paymentInfos.amount
-        payment.value.client_id = paymentInfos.client_id
-        payment.value.collaborator_id = paymentInfos.collaborator_id
         payment.value.instance_id = paymentInfos.instance_id
+        payment.value.date = paymentInfos.date
         payment.value.amount_required = paymentInfos.amount_required
+        payment.value.date = paymentInfos.date
         payment.value.paid_in_date = paymentInfos.paid_in_date
         payment.value.status = paymentInfos.status
     }
-    const setNewGainFromClient = function(paymentInfos, clientId){
-        setPayment(paymentInfos)
-        payment.value.fromClient(clientId)
+    const setNewGainFromClient = function(clientId, paymentInfo){
+        console.log('SET CLIENT ID', clientId);
+        if(paymentInfo) setPayment(paymentInfo)
+        payment.value.client_id = clientId
+        payment.value.type = 1
+        console.log({payment});
     }
 
-    const setNewCostFromClient = function(paymentInfos, clientId){
-        setPayment(paymentInfos)
-        payment.value.toClient(clientId)
+    const setNewCostFromClient = function(clientId){
+        payment.client_id = clientId
+        payment.type = 0
     }
 
-    const setNewGainFromCollaborator = function(paymentInfos, collaboratorId){
-        setPayment(paymentInfos)
-        payment.value.fromCollaborator(collaboratorId)
+    const setNewGainFromCollaborator = function(collaboratorId){
+        payment.collaboratorId = collaboratorId
+        payment.type = 1
     }
 
-    const setNewCostFromCollaborator = function(paymentInfos, collaboratorId){
-        setPayment(paymentInfos)
-        payment.value.toCollaborator(collaboratorId)
-    }
-
-    const savePayment = async function(){
-        let payment_data = payment.value
-        return await supabase.rpc('upsert_payment', { payment_data })
+    const setNewCostFromCollaborator = function(collaboratorId){
+        payment.collaboratorId = collaboratorId
+        payment.type = 0
     }
 
     const resetPayment = function(){
-        payment.value = new Payment()
+        payment.value = new Payment().toPlainObject()
+    }
+
+    const getDifferenceOfPaymentEntity = function(paymentInfo) {
+        return paymentInfo.amount_required - paymentInfo.amount
     }
 
     return {
@@ -55,7 +54,7 @@ export const useFiltersStore = defineStore('payments', () => {
         setNewCostFromClient,
         setNewGainFromCollaborator,
         setNewCostFromCollaborator,
-        savePayment,
-        resetPayment
+        resetPayment,
+        getDifferenceOfPaymentEntity
     }
 })
