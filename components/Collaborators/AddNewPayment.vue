@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import Payment from '@/assets/entities/payment.js';
 /* PROPS */
 const props = defineProps(['editingCollaborator'])
@@ -43,8 +43,8 @@ const props = defineProps(['editingCollaborator'])
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
 /* RESPONSE */
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 
 /* DATA */
 const newPayment = reactive(new Payment().toCollaborator(props.editingCollaborator.id));

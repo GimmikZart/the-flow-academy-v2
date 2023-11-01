@@ -14,11 +14,10 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from '~/store/pill'
-import { storeToRefs } from 'pinia'
+import { usePillNotify } from '~/store/pill'
 
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 
 const testError = () => {
   newErrorMessage('ERRORE MANNAGGIA A DIO')

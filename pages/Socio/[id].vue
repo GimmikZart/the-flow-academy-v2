@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-  import { useFiltersStore } from "@/store/pill";
+  import { usePillNotify } from "@/store/pill";
   import { ref, onBeforeMount, computed  } from 'vue';
   import ClientInstance from "@/assets/entities/clientInstance"
   import { usePaymentStore } from "@/store/payments";
@@ -95,8 +95,8 @@
   const { getInitials, getAge, reloadApp } = utility()
   /* COMPOSABLES */
   const route = useRoute()
-  const filtersStore = useFiltersStore()
-  const { newSuccessMessage, newErrorMessage } = filtersStore
+  const pillNotify = usePillNotify()
+  const { newSuccessMessage, newErrorMessage } = pillNotify
   /* PROPS */
   const props = defineProps(['clientId'])
   /* STORES */

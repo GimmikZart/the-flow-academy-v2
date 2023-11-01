@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import { ref, onBeforeMount  } from 'vue';
 import ActivityCategory from '@/assets/entities/activityCategory.js';
 /* SUPABASE */
@@ -45,8 +45,8 @@ const supabase = useSupabaseClient()
 /* EMTIS */
 const emit = defineEmits(['update'])
 /* RESPONSE */
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 
 /* DATA */
 const activityCategoriesDialog = ref(false)

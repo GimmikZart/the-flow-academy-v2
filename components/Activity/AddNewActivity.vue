@@ -65,10 +65,10 @@
 <script setup>
 /* IMPORTS */
 import Activity from '@/assets/entities/activity.js';
-import { useFiltersStore } from "@/store/pill"; 
+import { usePillNotify } from "@/store/pill"; 
 
-const filtersStore = useFiltersStore(); 
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify(); 
+const { newSuccessMessage, newErrorMessage } = pillNotify
 /* SUPABASE */
 const supabase = useSupabaseClient()
 /* COMPOSABLES */

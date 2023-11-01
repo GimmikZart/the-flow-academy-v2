@@ -119,11 +119,11 @@
 <script setup>
 import { watch } from "vue"
 import { usePaymentStore } from "@/store/payments"
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 
 const { reloadApp, formatDateMonthYear } = utility()
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 
 /* SUPABASE */
 const supabase = useSupabaseClient()

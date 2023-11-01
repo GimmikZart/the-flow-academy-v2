@@ -90,12 +90,12 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import Client from '@/assets/entities/client.js';
 const supabase = useSupabaseClient()
 const emit = defineEmits(['saved'])
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 
 const newClient = reactive(new Client());
 const addClientDialog = ref(false)

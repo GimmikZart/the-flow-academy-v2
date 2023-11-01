@@ -60,11 +60,11 @@
 /* SUPABASE */
 const supabase = useSupabaseClient()
 /* IMPORTS */
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import { ref, onBeforeMount  } from 'vue';
 /* RESPONSE */
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 
 /* DATA */
 const activityCategoriesDialog = ref(false)

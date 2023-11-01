@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import Payment from '@/assets/entities/payment.js';
 import { useDateFormat } from '@vueuse/core'
 import { watch, ref } from 'vue'
@@ -82,8 +82,8 @@ const supabase = useSupabaseClient()
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* RESPONSE */
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 
 /* DATA */
 const newPayment = ref(new Payment());

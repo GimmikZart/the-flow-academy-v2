@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import { ref, onBeforeMount  } from 'vue';
 import { usePaymentStore } from "@/store/payments";
 import { FilterMatchMode } from 'primevue/api';
@@ -88,8 +88,8 @@ const supabase = useSupabaseClient()
 /* UTILITY */
 const { getInitials, getAge } = utility()
 /* COMPOSABLES */
-const filtersStore = useFiltersStore()
-const { newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newErrorMessage } = pillNotify
 /* STORE */
 const paymentStore = usePaymentStore()
 /* DATA */

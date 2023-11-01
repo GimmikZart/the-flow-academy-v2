@@ -120,12 +120,12 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import Collaborator from '@/assets/entities/collaborator.js';
 const supabase = useSupabaseClient()
 const emit = defineEmits(['saved'])
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 
 const newCollaborator = reactive(new Collaborator());
 const addCollaboratorDialog = ref(false)

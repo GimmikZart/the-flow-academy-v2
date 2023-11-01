@@ -117,7 +117,7 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import Collaborator from '@/assets/entities/collaborator.js';
 import { onBeforeMount  } from 'vue';
 import { defineProps, watch } from 'vue'
@@ -128,8 +128,8 @@ const props = defineProps(['collaboratorId'])
 /* EMITS */
 const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 /* DATA */
 const editingCollaboratorDialog = ref(false)
 const editingCollaborator = reactive({value: new Collaborator()})

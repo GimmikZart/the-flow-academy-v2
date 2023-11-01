@@ -50,7 +50,9 @@
 <script setup>
 /* IMPORTS */
 import ActivityInstance from '@/assets/entities/activityInstance.js';
-import { useFiltersStore } from "@/store/pill"; const filtersStore = useFiltersStore(); const { newSuccessMessage, newErrorMessage } = filtersStore
+import { usePillNotify } from "@/store/pill"; 
+const pillNotify = usePillNotify(); 
+const { newSuccessMessage, newErrorMessage } = pillNotify
 /* SUPABASE */
 const supabase = useSupabaseClient()
 /* COMPOSABLES */

@@ -90,7 +90,7 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import Client from '@/assets/entities/client.js';
 import { defineProps, watch } from 'vue'
 /* SUPABASE */
@@ -100,8 +100,8 @@ import { defineProps, watch } from 'vue'
 /* EMITS */
   const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-  const filtersStore = useFiltersStore()
-  const { newSuccessMessage, newErrorMessage } = filtersStore
+  const pillNotify = usePillNotify()
+  const { newSuccessMessage, newErrorMessage } = pillNotify
 /* DATA */
   const editingClientDialog = ref(false)
   const editingClient = reactive({value: new Client()})

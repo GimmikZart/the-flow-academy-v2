@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import Activity from '@/assets/entities/activity.js';
 import { defineProps, watch } from 'vue'
 /* SUPABASE */
@@ -72,8 +72,8 @@ import { defineProps, watch } from 'vue'
 /* EMITS */
   const emit = defineEmits(['saved'])
 /* COMPOSABLES */
-  const filtersStore = useFiltersStore()
-  const { newSuccessMessage, newErrorMessage } = filtersStore
+  const pillNotify = usePillNotify()
+  const { newSuccessMessage, newErrorMessage } = pillNotify
   const { getInitials } = utility()
 /* DATA */
   const editingActivityDialog = ref(false)

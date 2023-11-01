@@ -20,16 +20,16 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useFiltersStore } from '~/store/pill'
+import { usePillNotify } from '~/store/pill'
 import { storeToRefs } from 'pinia'
 
 /* LOCAL DATA */
   let clock = ref(new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }));
 
 /* STORE DATA */
-  const filtersStore = useFiltersStore()
-  const { resetMessage } = filtersStore
-  const { getMessage,  getType, getTimeout} = storeToRefs(filtersStore)
+  const pillNotify = usePillNotify()
+  const { resetMessage } = usePillNotify
+  const { getMessage,  getType, getTimeout} = storeToRefs(pillNotify)
 
 /* COMPUTED */
   const messageBoxClass = computed(() => {

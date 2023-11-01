@@ -7,10 +7,6 @@
 
 <script setup>
 const supabase = useSupabaseClient()
-/* const filtersStore = useFiltersStore()
-const { newErrorMessage } = filtersStore */
-
-
 
 const router = useRouter();
 const creds = reactive({

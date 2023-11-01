@@ -51,14 +51,14 @@
 
 <script setup>
 import { ref, onBeforeMount  } from 'vue';
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 /* SUPABASE */
 const supabase = useSupabaseClient()
 /* COMPOSABLES */
 const { getInitials } = utility()
 /* RESPONSE */
-const filtersStore = useFiltersStore()
-const { newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newErrorMessage } = pillNotify
 
 const activityInstanceList = ref([]);
 
