@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useFiltersStore = defineStore({
+export const usePillNotify = defineStore({
   id: 'pill-notify',
   state: () => {
     return {
