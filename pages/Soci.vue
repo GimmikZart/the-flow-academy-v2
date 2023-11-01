@@ -53,7 +53,7 @@
         </Column> -->
         <Column field="status" header="Status" sortable >
           <template #body="slotProps">
-            <ClientsStatusLabel :clientStatus="slotProps.data.status"></ClientsStatusLabel>
+            <StatusLabel :status-value="slotProps.data.status"></StatusLabel>
           </template>
         </Column>
         <Column field="action"  header="Azione">

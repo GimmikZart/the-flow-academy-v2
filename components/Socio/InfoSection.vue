@@ -3,7 +3,7 @@
         <!-- BOX -->
         <div class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full h-full">
             <h3 class="font-bold text-sm">Status</h3>
-            <ClientsStatusLabel :clientStatus="client.status"></ClientsStatusLabel>
+            <StatusLabel :status-value="client.status"></StatusLabel>
         </div>
         <div  class="bg-white w-full py-2 px-4 flex justify-between items-center rounded-lg my-1 h-full">
             <h3 class="font-bold text-sm">Sesso</h3>

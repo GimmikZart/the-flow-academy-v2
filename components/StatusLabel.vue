@@ -9,14 +9,19 @@
 
 <script setup>
 import { ref, onMounted, watch   } from 'vue';
-const props = defineProps(['clientStatus'])
+const props = defineProps({
+  statusValue: {
+    type: Number,
+    required: true
+  }
+})
 
 const icon = ref('');
 const color = ref('');
 const label = ref('');
 
 const setTag = () => {
-  switch (props.clientStatus) {
+  switch (props.statusValue) {
     case 0:
       icon.value = 'el:ok-circle'
       label.value = 'pagato'
@@ -36,7 +41,7 @@ const setTag = () => {
 }
 
 watch(
-  () => props.clientStatus,
+  () => props.statusValue,
   () => {
     setTag()
   }

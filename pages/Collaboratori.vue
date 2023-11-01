@@ -51,7 +51,7 @@
         </Column> -->
         <Column field="status" header="Status" sortable >
           <template #body="slotProps">
-            <CollaboratorsStatusLabel :collaboratorStatus="slotProps.data.status"></CollaboratorsStatusLabel>
+            <StatusLabel :status-value="slotProps.data.status"></StatusLabel>
           </template>
         </Column>
         <Column field="action"  header="Azione">
