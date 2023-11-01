@@ -7,7 +7,7 @@
           <span class="text-l font-bold ml-6">{{new Date().toLocaleDateString('it-IT')}}</span>
         </div>
         <div id="system-message-box" ref="messageBox" class="h-full flex items-center justify-center" :class="messageBoxClass">
-          {{ getMessage }}
+          {{ message }}
         </div>
         <div class="w-[175px] h-full rounded-r-[30px] bg-white flex items-center justify-end pr-3 border-l-2">
           <span class="text-xl font-bold mr-6">{{ clock }}</span>
@@ -28,13 +28,13 @@ import { storeToRefs } from 'pinia'
 
 /* STORE DATA */
   const pillNotify = usePillNotify()
-  const { resetMessage } = usePillNotify
-  const { getMessage,  getType, getTimeout} = storeToRefs(pillNotify)
+  const { resetMessage } = pillNotify
+  const { message, type, timeout} = storeToRefs(pillNotify)
 
 /* COMPUTED */
   const messageBoxClass = computed(() => {
     let className;
-    switch (getType.value) {
+    switch (type.value) {
       case 0:
         className = 'success'
         break;
@@ -53,7 +53,7 @@ import { storeToRefs } from 'pinia'
     }
     setTimeout(() => {
       resetMessage()
-    }, getTimeout.value);
+    }, timeout.value);
     return className
   })
 

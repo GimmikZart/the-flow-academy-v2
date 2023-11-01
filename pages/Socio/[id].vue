@@ -59,7 +59,7 @@
     </section>
 
     <!-- DIALOGS -->
-    <ClientsHandlePayment v-if="client" :client="client" :visible="handlePaymentDialog" @save="savePayment()" @close="handlePaymentDialog = false"></ClientsHandlePayment>
+    <PaymentsHandleDialog v-if="client" :user="client" :user-type="userTypes.CLIENT" :visible="handlePaymentDialog" @save="savePayment()" @close="handlePaymentDialog = false"></PaymentsHandleDialog>
 
     <Dialog :visible="addActivityDialog" modal header="Iscrivi ad attività" :style="{ minWidth: '20vw' }">
       <Dropdown class="w-full" v-model="selectedNewActivity" :options="allActivities">
@@ -91,6 +91,7 @@
   import { ref, onBeforeMount, computed  } from 'vue';
   import ClientInstance from "@/assets/entities/clientInstance"
   import { usePaymentStore } from "@/store/payments";
+  import { userTypes } from "assets/enums/UserType";
   const supabase = useSupabaseClient()
   const { getInitials, getAge, reloadApp } = utility()
   /* COMPOSABLES */

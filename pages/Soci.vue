@@ -74,7 +74,7 @@
         </Column>
       </DataTable>
     </section>
-    <ClientsHandlePayment v-if="clientSelected" :visible="isHandlePaymentDialogVisible" :client="clientSelected" @close="isHandlePaymentDialogVisible = false" @save="isHandlePaymentDialogVisible = false;loadClientsList()"></ClientsHandlePayment>
+    <PaymentsHandleDialog v-if="clientSelected" :visible="isHandlePaymentDialogVisible" :user="clientSelected" :user-type="userTypes.CLIENT" @close="isHandlePaymentDialogVisible = false" @save="isHandlePaymentDialogVisible = false;loadClientsList()"></PaymentsHandleDialog>
   </nuxt-layout>
 </template>
 
@@ -83,6 +83,7 @@ import { usePillNotify } from "@/store/pill";
 import { ref, onBeforeMount  } from 'vue';
 import { usePaymentStore } from "@/store/payments";
 import { FilterMatchMode } from 'primevue/api';
+import { userTypes } from "assets/enums/UserType";
 /* SUPABASE */
 const supabase = useSupabaseClient()
 /* UTILITY */

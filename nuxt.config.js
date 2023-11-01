@@ -1,5 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_KEY: process.env.SUPABASE_KEY,
+    },
+  },
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -13,7 +19,7 @@ export default defineNuxtConfig({
       enabled: true
     }
   },
-  modules: ['nuxt-icon', '@pinia/nuxt','@nuxtjs/supabase'],
+  modules: ['@pinia/nuxt', 'nuxt-icon', '@nuxtjs/supabase'],
   css: [
     "primevue/resources/themes/lara-light-blue/theme.css",
     '~/assets/css/main.css',

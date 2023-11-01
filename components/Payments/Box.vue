@@ -61,17 +61,18 @@
     </div>
 
 
-    <ClientsHandlePayment :visible="showDialog" :client="clientInfo" :instance="paymentInfo.instances" edit-mode @close="showDialog = false" @save="showDialog = false;emits('edited')"></ClientsHandlePayment>
+    <PaymentsHandleDialog :visible="showDialog" :user="clientInfo" :userType="userTypes.CLIENT" :instanceId="paymentInfo.instances ? paymentInfo.instances.id : null"  @close="showDialog = false" @save="showDialog = false;emits('edited')"></PaymentsHandleDialog>
 </template>
 <script setup>
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
 import { ref, computed, watch } from "vue"
 import { usePaymentStore } from "@/store/payments";
+import { userTypes } from "@/assets/enums/UserType"
 /* SUPABASE */
 const supabase = useSupabaseClient()
 /* RESPONSE */
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 /* UTILITY */
 const { reloadApp, formatDateMonthYear,formatDate } = utility()
 

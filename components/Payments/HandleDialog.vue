@@ -117,11 +117,15 @@
 <script setup>
 import { watch } from "vue"
 import { usePaymentStore } from "@/store/payments"
-import { useFiltersStore } from "@/store/pill";
+import { usePillNotify } from "@/store/pill";
+import { isClient, isCollaborator, userTypes } from "@/assets/enums/UserType"
+import { ClientApi } from "@/backend/api/clients"
+import { CollaboratorApi } from "@/backend/api/collaborators"
+import { PaymentsApi } from "@/backend/api/payments"
 
 const { reloadApp, formatDateMonthYear } = utility()
-const filtersStore = useFiltersStore()
-const { newSuccessMessage, newErrorMessage } = filtersStore
+const pillNotify = usePillNotify()
+const { newSuccessMessage, newErrorMessage } = pillNotify
 
 /* SUPABASE */
 const supabase = useSupabaseClient()
@@ -155,7 +159,7 @@ const props = defineProps({
 const suggestedPayments = ref([])
 const selectedPayment = ref()
 const selectedActivity = ref()
-const activitiesList= ref()
+const activitiesList= ref([])
 const otherActivity = ref(false)
 /* EMITS */
 const emits = defineEmits(["close", "save"])
@@ -213,39 +217,25 @@ watch(() => otherActivity.value, (newValue) => {
 
 /* METHODS */
 async function getSuggestedPayments(){
-    try {
-        let client_id_param = props.user.id
-        let { data, error } = await supabase.rpc('get_incomplete_payments', { client_id_param })
-        if(error) throw error
-        suggestedPayments.value = data
-    } catch (error) {
-        newErrorMessage(`ERRORE NELL'AQUISIZIONE DEI PAGAMENTI SUGGERITI DAL DB: ${error.message}`)
+    if(isClient(props.userType)) {
+        suggestedPayments.value = await ClientApi.getSuggestedPayments(props.user.id)
     }
 }
 
 const saveEditedPayment = async function(){
-    try {
-        let payment_data = paymentStore.payment;
-        let { error } = await supabase.rpc('upsert_payment', { payment_data })
-        if(error) throw error
-        emits("save")
-        paymentStore.resetPayment()
-        getLists()
-        newSuccessMessage(`Pagamento andato a buon fine`)
-    } catch (error) {
-        newErrorMessage(`ERRORE NEL SALVATAGGIO DEL PAGAMENTO: ${error.message}`)
-    }
+    PaymentsApi.saveEditedPayment(paymentStore.payment)
+    paymentStore.resetPayment()
+    emits("save")
+    getLists()
 }
 
 const getActivitiesList = async function(){
-    try {
-        const { data, error } = await supabase.from("client_instance").select("instances(id, name, level, cost)").eq("client_id", props.user.id)
-        if (error) throw error
-        activitiesList.value = data
-        autoSetActivity()
-    } catch (error) {
-        newErrorMessage(`ERRORE NELL'AQUISIZIONE DELLE ATTIVITA' LEGATE AL CLIENTE: ${error.message}`)
+    if(isClient(props.userType)) {
+        activitiesList.value = await ClientApi.getActivitiesList(props.user.id)
+    } else if(isCollaborator(props.userType)){
+        activitiesList.value = await CollaboratorApi.getActivitiesList(props.user.id)
     }
+    autoSetActivity()
 }
 
 const autoSetActivity = function(){
@@ -264,5 +254,8 @@ const getLists = async function(){
     await getActivitiesList()
 }
 /* ON CREATE */
-getLists()
-</script>
+onMounted(() => {
+    console.log('FANCULO');
+    getLists()
+})
+</script>backend/api/clientsbackend/api/collaboratorsbackend/api/payments
