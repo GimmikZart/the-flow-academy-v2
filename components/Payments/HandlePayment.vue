@@ -2,16 +2,11 @@
     <Dialog
         :visible="visible"
         modal
-        :header="`Gestisci il pagamento di ${client.name} ${client.surname}:`"
+        :header="`Gestisci il pagamento di ${user.name} ${user.surname}:`"
         :style="{ width: '50vw' }"
     >
         <div class="grid grid-rows-4 grid-cols-3 gap-10 p-10">
-            <!-- <span v-if="editMode" class="p-float-label col-start-1 col-end-3">
-                <InputText v-model="instanceInfo" disabled class="w-full"/>
-                <label>Per la seguente attività</label>
-            </span> -->
-            
-            <span v-if="!editMode && suggestedPayments.length > 0" class="p-float-label col-start-1 col-end-4">
+            <span v-if="!instanceId && suggestedPayments.length > 0" class="p-float-label col-start-1 col-end-4">
                 <Dropdown v-model="selectedPayment" showClear :options="suggestedPayments" class="w-full">
                     <template #value="slotProps">
                         <div v-if="slotProps.value" class="flex">
@@ -31,7 +26,7 @@
             </span>
 
             <span class="p-float-label col-start-1 col-end-3">
-                <Dropdown v-model="selectedActivity" :disabled="editMode" :showClear="!editMode" :options="activitiesList" class="w-full">
+                <Dropdown v-model="selectedActivity" :disabled="instanceId != null" :showClear="instanceId == null" :options="activitiesList" class="w-full">
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
                             <h5>{{ slotProps.value.instances.name }} | {{ slotProps.value.instances.level }}</h5>
@@ -47,7 +42,7 @@
             </span>
 
             <span class="flex items-center col-start-3 col-end-4">
-                <Checkbox v-model="otherActivity" :disabled="editMode" :binary="true" />
+                <Checkbox v-model="otherActivity" :disabled="instanceId != null" :binary="true" />
                 <label for="ingredient1" class="ml-2 text-h2"> Altro </label>
             </span>
 
@@ -141,19 +136,18 @@ const props = defineProps({
         required: false,
         default: false
     },
-    client: {
+    user: {
         type: Object,
         required: true
     },
-    instance: {
-        type: Object,
+    instanceId: {
+        type: Number,
         required: false,
         default: null
     },
-    editMode: {
-        type: Boolean,
-        required: false,
-        default: false
+    userType: {
+        type: Number,
+        required: true
     }
 })
 
@@ -165,15 +159,6 @@ const activitiesList= ref()
 const otherActivity = ref(false)
 /* EMITS */
 const emits = defineEmits(["close", "save"])
-
-/* COMPUTED */
-const instanceInfo = computed(() => {
-    if(props.instance){
-        return `${ props.instance.name} - ${props.instance.level}`
-    } else {
-        return "ALTRO"
-    }
-})
 
 /* WATCHERS */
 watch(() => paymentStore.payment.amount, (newValue) => {
@@ -191,7 +176,7 @@ watch(() => paymentStore.payment.status, (newStatus) => {
     if(!newStatus) paymentStore.payment.amount == paymentStore.payment.amount_required ? paymentStore.payment.status = true : paymentStore.payment.status = false
 })
 
-watch(() => props.instance, () => {
+watch(() => props.instanceId, () => {
         autoSetActivity()
     },
     { 
@@ -202,7 +187,7 @@ watch(() => props.instance, () => {
 watch(() => selectedPayment.value, (newValue) => {
     if(newValue != null){
         selectedActivity.value = null
-        paymentStore.setNewGainFromClient(props.client.id, newValue)
+        paymentStore.setNewGainFromClient(props.user.id, newValue)
         paymentStore.payment.amount = newValue.amount_required
         paymentStore.payment.amount_required = newValue.amount_required
         paymentStore.payment.id = newValue.id
@@ -212,7 +197,7 @@ watch(() => selectedActivity.value, (newValue) => {
     if(newValue != null){
         selectedPayment.value = null
         otherActivity.value = false
-        paymentStore.setNewGainFromClient(props.client.id)
+        paymentStore.setNewGainFromClient(props.user.id)
         paymentStore.payment.amount = newValue.instances.cost
         paymentStore.payment.amount_required = newValue.instances.cost
         paymentStore.payment.instance_id = newValue.instances.id
@@ -229,7 +214,7 @@ watch(() => otherActivity.value, (newValue) => {
 /* METHODS */
 async function getSuggestedPayments(){
     try {
-        let client_id_param = props.client.id
+        let client_id_param = props.user.id
         let { data, error } = await supabase.rpc('get_incomplete_payments', { client_id_param })
         if(error) throw error
         suggestedPayments.value = data
@@ -254,7 +239,7 @@ const saveEditedPayment = async function(){
 
 const getActivitiesList = async function(){
     try {
-        const { data, error } = await supabase.from("client_instance").select("instances(id, name, level, cost)").eq("client_id", props.client.id)
+        const { data, error } = await supabase.from("client_instance").select("instances(id, name, level, cost)").eq("client_id", props.user.id)
         if (error) throw error
         activitiesList.value = data
         autoSetActivity()
@@ -264,8 +249,8 @@ const getActivitiesList = async function(){
 }
 
 const autoSetActivity = function(){
-    if(props.instance != null) selectedActivity.value = activitiesList.value.find((act) => {
-        return act.instances.id == props.instance.id
+    if(props.instanceId != null) selectedActivity.value = activitiesList.value.find((act) => {
+        return act.instances.id == props.instanceId
     }) 
 }
 
